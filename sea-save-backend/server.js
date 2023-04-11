@@ -23,3 +23,6 @@ app.listen(port, () => {
 });
 
 app.use("/animal", require("./routes/animal"));
+app.use("/challenge", require("./routes/challenge"));
+app.use("/profile", require("./routes/profile"));
+app.use("/forum", require("./routes/forum"));
