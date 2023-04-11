@@ -10,8 +10,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB connection
-const uri = 'mongodb+srv://<your-username>:<your-password>@cluster.mongodb.net/<your-database-name>?retryWrites=true&w=majority';
-mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
+const uri = 'mongodb+srv://seasave:seasave@sea-save.tdpyp5m.mongodb.net/?retryWrites=true&w=majority';
+mongoose.connect(uri, {});
 
 const connection = mongoose.connection;
 connection.once('open', () => {
@@ -21,3 +21,5 @@ connection.once('open', () => {
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });
+
+app.use("/animal", require("./routes/animal"));
