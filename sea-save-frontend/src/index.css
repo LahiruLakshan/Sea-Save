@@ -11,3 +11,42 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+::-webkit-scrollbar{
+  width: 12px;
+  background-color: rgb(239, 239, 239);
+  opacity: 0;
+  /*box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);*/
+}
+::-webkit-scrollbar-thumb{
+  /*box-shadow: 0 4px 6px rgba(3, 54, 100, 0.3), 0 1px 3px rgba(0, 0, 0, 0.08);*/
+  /*background: #DA22FF;  !* fallback for old browsers *!*/
+  background: #303030;
+  border: 2px solid rgb(239, 239, 239);
+  border-radius: 6px;
+  width: 12px;
+}
+::-webkit-scrollbar-thumb:hover{
+  /*background: #DA22FF;  !* fallback for old browsers *!*/
+  background: #303030;
+  width: 10px;
+  transition: all 1s ease;
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  border-radius: 50%;
+  border: 5px solid #C6AD70;;
+  background-color: #C6AD70;
+  background-image: none;
+}
+
+.carousel-control-next-icon:after
+{
+  font-size: 55px;
+  color: red;
+}
+
+.carousel-control-prev-icon:after {
+  font-size: 55px;
+  color: red;
+}
