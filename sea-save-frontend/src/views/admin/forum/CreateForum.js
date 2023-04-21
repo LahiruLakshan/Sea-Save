@@ -5,7 +5,7 @@ import {db} from "../../../firebase";
 import {Box, Grid, Paper, TextField} from "@mui/material";
 import {LoadingButton} from "@mui/lab";
 
-const CreateRegulation = (props) => {
+const CreateForum = (props) => {
 
     const {rowData, onClose, name} = props;
     const [loading, setLoading] = React.useState(false);
@@ -33,9 +33,9 @@ const CreateRegulation = (props) => {
         //     console.log("row data", rowData)
         //     console.log("row data", rowData)
         //     let payload = {title, description, lastUpdated: name};
-        //     const docRef = doc(db, "regulation", rowData.id)
+        //     const docRef = doc(db, "forum", rowData.id)
         //     await updateDoc(docRef, payload).then(() => {
-        //         enqueueSnackbar("Updated rule and regulation!", {variant: "success"});
+        //         enqueueSnackbar("Updated rule and forum!", {variant: "success"});
         //         setTitle("")
         //         setDescription("")
         //         setLoading(false);
@@ -46,9 +46,9 @@ const CreateRegulation = (props) => {
         // }
         else {
             let payload = {title, description, createdDateTime: new Date(), author: name, lastUpdated: ""};
-            const docRef = doc(db, "regulation", "regulation")
+            const docRef = doc(db, "forum", "forum")
             await setDoc(docRef, payload).then(() => {
-                enqueueSnackbar("Rule and regulation submitted!", {variant: "success"});
+                enqueueSnackbar("Rule and forum submitted!", {variant: "success"});
                 setChanges(false)
                 setLoading(false);
             })
@@ -59,7 +59,7 @@ const CreateRegulation = (props) => {
     //start load user data
     useEffect(() => {
 
-        const docRef = doc(db, "regulation", "regulation");
+        const docRef = doc(db, "forum", "forum");
 
         getDoc(docRef).then((doc) => {
             setTitle(doc.data().title)
@@ -90,7 +90,7 @@ const CreateRegulation = (props) => {
                                     <TextField margin="dense" id="outlined-basic"
                                                fullWidth
                                                sx={{width: "100%", minWidth: "150px"}}
-                                               variant="outlined" label={"Regulation Title"}
+                                               variant="outlined" label={"Forum Title"}
                                                value={title}
                                                onChange={(e) => {
                                                    setChanges(true);
@@ -110,8 +110,8 @@ const CreateRegulation = (props) => {
                                     <TextField margin="dense" id="outlined-basic"
                                                fullWidth
                                                sx={{width: "100%", minWidth: "150px"}}
-                                               variant="outlined" label={"Regulation Description"}
-                                               placeholder={"Write regulation..."}
+                                               variant="outlined" label={"Forum Description"}
+                                               placeholder={"Write forum..."}
                                                value={description}
                                                multiline
                                         // minRows={7}
@@ -137,4 +137,4 @@ const CreateRegulation = (props) => {
     );
 };
 
-export default CreateRegulation;
+export default CreateForum;

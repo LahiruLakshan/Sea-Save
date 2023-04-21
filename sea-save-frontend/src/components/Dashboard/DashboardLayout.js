@@ -15,16 +15,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import {Link, useHistory, useLocation} from "react-router-dom";
-import logo from "../../assets/svg/logo.svg";
+import logo from "../../assets/images/sea-save-logo.png";
 import {Avatar, Grid} from "@mui/material";
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import Toolbar from "@mui/material/Toolbar";
 import customTheme from "../../theme";
-import CollectionsBookmarkRoundedIcon from '@mui/icons-material/CollectionsBookmarkRounded';
-import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
-import PermMediaRoundedIcon from '@mui/icons-material/PermMediaRounded';
-import {DashboardRounded} from "@mui/icons-material";
 import {auth, db} from "../../firebase";
 import PersonIcon from '@mui/icons-material/Person';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
@@ -32,6 +28,8 @@ import SecurityIcon from '@mui/icons-material/Security';
 import {collection, onSnapshot} from "firebase/firestore";
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import DriveEtaIcon from '@mui/icons-material/DriveEta';
+import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 
 const drawerWidth = 270
 const openedMixin = (theme) => ({
@@ -221,11 +219,11 @@ const DashboardLayout = (props) => {
             title: 'User Profile'
         },
         {
-            text: 'User',
+            text: 'User Management',
             secondaryText: "",
             icon: <PeopleAltRoundedIcon/>,
             path: '/user',
-            title: 'User'
+            title: 'User Management'
         },
         // {
         //     text: 'Dashboard',
@@ -236,32 +234,32 @@ const DashboardLayout = (props) => {
         // },
 
         {
-            text: 'Drive',
+            text: 'Challenge Management',
             secondaryText: "",
-            icon: <DriveEtaIcon/>,
-            path: '/drive',
-            title: 'Drive'
+            icon: <AssignmentRoundedIcon/>,
+            path: '/challenge',
+            title: 'Challenge Management'
         },
         {
-            text: 'Album',
+            text: 'Animal Profile',
             secondaryText: "",
             icon: <PhotoLibraryIcon/>,
-            path: '/album',
-            title: 'Album'
+            path: '/animal',
+            title: 'Animal Profile'
         },
         {
-            text: 'Rule & Regulation',
+            text: 'Forum Management',
             secondaryText: "",
             icon: <SecurityIcon/>,
-            path: '/regulation',
-            title: 'Rule & Regulations'
+            path: '/forum',
+            title: 'Forum Management'
         },
         // {
-        //     text: 'Advertisement',
+        //     text: 'AnimalProfile',
         //     secondaryText: "",
         //     icon: <PermMediaRoundedIcon/>,
-        //     path: '/advertisement',
-        //     title: 'Advertisement'
+        //     path: '/animal',
+        //     title: 'AnimalProfile'
         // },
         // role === "Super Admin" && {
         //     text: 'Admin',
@@ -330,7 +328,7 @@ const DashboardLayout = (props) => {
                         {
                             (location.pathname === "/") ?
                                 <Typography variant={"h4"} noWrap component="div" className={classes[textRef.current]}>
-                                    Dashboard
+                                    User Management
                                 </Typography> : ""
                         }
 
@@ -341,7 +339,7 @@ const DashboardLayout = (props) => {
 
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader sx={{justifyContent: "space-around", paddingTop:"50px"}}>
-                    {open && <img src={logo} width={150} height={100}/>}
+                    {open && <img src={logo} width={150} />}
                     {open && <IconButton sx={{backgroundColor: "rgba(0,0,0,0.24)", color:"#303030"}} onClick={handleDrawerClose}>
                         {theme.direction === 'rtl' ? <ChevronRightIcon/> : <ChevronLeftIcon/>}
                     </IconButton>}
@@ -373,6 +371,25 @@ const DashboardLayout = (props) => {
                     </Grid>
                     <Grid sx={{paddingTop: "90px"}}>
 
+                        <ListItem
+                            button
+                            to="/home"
+                            component={Link}
+                            onClick={() => {
+                                history.push("/home");
+                            }}
+                            sx={{
+                                borderRadius: "10px",
+                                marginY: "10px",
+                                backgroundColor: "#252525",
+                                color:theme.palette.primary.light,
+                                "&:hover": {
+                                    backgroundColor: "rgba(0,0,0,0.7)",
+                                }
+                            }}>
+                            <ListItemIcon sx={{color:theme.palette.primary.light}}><HomeRoundedIcon/></ListItemIcon>
+                            <ListItemText primary={"Back To Home"}/>
+                        </ListItem>
 
                         <ListItem
                             button
@@ -405,7 +422,7 @@ const DashboardLayout = (props) => {
                     {children}
                 </div>
                 <div className={classes.footer}>
-                    <Typography variant="body2" color="textSecondary" align="center">Copyright © 2022. All rights reserved by Emirates Offroaders</Typography>
+                    <Typography variant="body2" color="textSecondary" align="center">Copyright © 2022. All rights reserved by Sea Save</Typography>
                 </div>
             </Box>
         </Box>

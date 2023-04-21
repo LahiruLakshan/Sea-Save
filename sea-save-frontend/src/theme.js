@@ -4,12 +4,12 @@ const defaultTheme = createTheme()
 const theme = createTheme({
     palette: {
         primary: {
-            main: "#C6AD70",
-            light: "#D1C392",
+            main: "#0049d5",
+            light: "#83a1c7",
         },
         secondary: {
             // main: "rgba(230,211,163,0.2)",
-            main: "#fff4de",
+            main: "#cadfff",
             light: "rgb(255,255,255)"
         },
     },
@@ -60,12 +60,12 @@ const theme = createTheme({
         MuiButton: {
             styleOverrides: {
                 containedPrimary: {
-                    background: "#C6AD70",
+                    background: "#0049d5",
                     color: "#ffffff",
                 },
                 outlinedPrimary: {
-                    color: "#C6AD70",
-                    borderColor: "#C6AD70",
+                    color: "#0049d5",
+                    borderColor: "#0049d5",
 
                 }
             }
@@ -73,7 +73,7 @@ const theme = createTheme({
         MuiLoadingButton: {
             styleOverrides: {
                 loadingIndicator: {
-                    color: "#C6AD70",
+                    color: "#0049d5",
                 }
             }
         },
@@ -81,7 +81,7 @@ const theme = createTheme({
             styleOverrides: {
                 paper: {
                     // background: "linear-gradient(-90deg, rgba(66,8,166,1) 0%, rgba(0,45,146,1) 100%)",
-                    background: "#fff4de",
+                    background: "#cadfff",
                     color: "#303030",
                     [defaultTheme.breakpoints.up('sm')]: {
                         padding: "0 7px"

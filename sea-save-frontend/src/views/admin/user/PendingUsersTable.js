@@ -20,28 +20,12 @@ import moment from "moment";
 
 const collectionMenuItems = [
     {id: 0, value: "all", text: "All"},
-    {id: 1, value: "registerDateTime", text: "Register Date&Time"},
-    {id: 2, value: "username", text: "Users Name"},
-    {id: 3, value: "name", text: "Name"},
-    {id: 4, value: "email", text: "Email"},
+    {id: 1, value: "name", text: "Name"},
+    {id: 2, value: "email", text: "Email"},
+    {id: 3, value: "contactNo", text: "ContactNo"},
+    {id: 4, value: "type", text: "Type"},
 ];
 const collectionHeadCells = [
-    {
-        id: 'registerDateTime',
-        numeric: true,
-        disablePadding: false,
-        align: "left",
-        sort: true,
-        label: 'Registered',
-    },
-    {
-        id: 'username',
-        numeric: true,
-        disablePadding: false,
-        align: "left",
-        sort: true,
-        label: 'Users Name',
-    },
     {
         id: 'name',
         numeric: true,
@@ -59,22 +43,36 @@ const collectionHeadCells = [
         label: 'Email',
     },
     {
-        id: 'viewMore',
+        id: 'contactNo',
         numeric: true,
         disablePadding: false,
         align: "left",
-        sort: false,
-        label: 'View More',
+        sort: true,
+        label: 'ContactNo',
+    },
+    {
+        id: 'type',
+        numeric: true,
+        disablePadding: false,
+        align: "left",
+        sort: true,
+        label: 'Type',
+    },
+    {
+        id: 'remove',
+        numeric: true,
+        disablePadding: false,
+        align: "left",
+        sort: true,
+        label: 'Remove',
     },
 
 ];
 
 
-const PendingUsersTable = ({role}) => {
+const PendingUsersTable = ({role, getAllProfiles, profileList, setProfileList, setRows, rows}) => {
 
-    const [collectionList, setCollectionList] = useState([]);
     const [filterValue, setFilterValue] = React.useState('all');
-    const [rows, setRows] = useState([]);
     //Modal
     const [rowData, setRowData] = React.useState("");
     const [open, setOpen] = React.useState(false);
@@ -91,18 +89,16 @@ const PendingUsersTable = ({role}) => {
     //search functions
     const requestSearch = (searchedVal) => {
         let keyword = searchedVal.target.value;
-        let newData = collectionList.filter(item => {
+        let newData = profileList.filter(item => {
             console.log("requestSearch : ", item)
             if (keyword === "") return item;
-            else if ((item.username.toLowerCase().includes(keyword.toLowerCase()) || item.name.toLowerCase().includes(keyword.toLowerCase()) || item.email.toLowerCase().includes(keyword.toLowerCase())) && filterValue === "all") {
+            else if ((item.contactNo.toLowerCase().includes(keyword.toLowerCase()) || item.type.toLowerCase().includes(keyword.toLowerCase()) || item.name.toLowerCase().includes(keyword.toLowerCase()) || item.email.toLowerCase().includes(keyword.toLowerCase())) && filterValue === "all") {
                 return item;
-            } else if (item.username.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "username") {
+            } else if (item.contactNo.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "contactNo") {
                 return item;
             } else if (item.name.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "name") {
                 return item;
             } else if (item.email.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "email") {
-                return item;
-            } else if (moment(item.registerDateTime.toDate()).format('MMMM Do YYYY, h:mm a').toLowerCase().includes(keyword.toLowerCase()) && filterValue === "registerDateTime") {
                 return item;
             }
 
@@ -113,29 +109,6 @@ const PendingUsersTable = ({role}) => {
         setFilterValue(event.target.value);
     };
 
-
-    //start load user data
-    useEffect(() => {
-        const colRef = collection(db, "user");
-        const dataQuery = query(colRef,
-            where("adminApproval", "==", false),
-            // orderBy("registerDateTime", "desc")
-            );
-        onSnapshot(
-            dataQuery,
-            (snapShot) => {
-                let list = [];
-                snapShot.docs.forEach((doc) => {
-                    list.push({id: doc.id, ...doc.data()});
-                });
-                setCollectionList(list);
-                setRows(list);
-            },
-            (error) => {
-                console.log(error);
-            }
-        )
-    }, [])
 
 
     //pagination functions
@@ -173,8 +146,9 @@ const PendingUsersTable = ({role}) => {
                         <TableBody>
                             {stableSort(rows, getComparator(tableOrder, tableOrderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .filter((value) => value.adminApproval === true)
                                 .map((row, index) => (
-                                    <UsersTableBody id={"Pending"} key={row.name} row={row} handleOpen={handleOpen}
+                                    <UsersTableBody getAllProfiles={getAllProfiles} id={"Pending"} key={row.name} row={row} handleOpen={handleOpen}
                                                     stableSort={stableSort} getComparator={getComparator} role={role}/>
                                 ))}
 

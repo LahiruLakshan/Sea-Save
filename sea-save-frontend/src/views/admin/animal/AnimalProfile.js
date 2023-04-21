@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTheme} from "@mui/material/styles";
 import TabContext from "@mui/lab/TabContext";
 import Box from "@mui/material/Box";
@@ -6,12 +6,31 @@ import TabList from "@mui/lab/TabList";
 import Tab from "@mui/material/Tab";
 import SwipeableViews from "react-swipeable-views";
 import TabPanel from "@mui/lab/TabPanel";
-import CreateDrive from "./CreateDrive";
-import DriveTable from "./DriveTable";
+import CreateAnimalProfile from "./CreateAnimalProfile";
+import AnimalProfileTable from "./AnimalProfileTable";
+import axios from "axios";
+import {BASE_URL} from "../../../config/defaults";
 
-const Drive = () => {
+const AnimalProfile = () => {
     const [value, setValue] = React.useState(0);
     const theme = useTheme();
+    const [rows, setRows] = useState([]);
+    const [animalsList, setAnimalsList] = useState([]);
+
+    useEffect(() => {
+        console.log("//start load user data ")
+        getAllAnimals();
+
+    }, [])
+    const getAllAnimals = async () => {
+        await axios.get(`${BASE_URL}animal/`)
+            .then(response => {
+                console.log("animal GET : ", response.data)
+
+                setAnimalsList(response.data);
+                setRows(response.data);
+            })
+    }
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -33,8 +52,8 @@ const Drive = () => {
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <TabList onChange={handleChange} aria-label="lab API tabs example" textColor="primary"
                          indicatorColor="primary">
-                    <Tab label="All Drives" {...a11yProps(1)} />
-                    <Tab label="Create Drive" {...a11yProps(2)} />
+                    <Tab label="All Animals" {...a11yProps(1)} />
+                    <Tab label="Create Animal Profile" {...a11yProps(2)} />
                 </TabList>
             </Box>
             <SwipeableViews
@@ -43,14 +62,14 @@ const Drive = () => {
                 onChangeIndex={handleChangeIndex}
             >
                 <TabPanel value={value} index={0} dir={theme.direction}>
-                    <DriveTable/>
+                    <AnimalProfileTable rows={rows} animalsList={animalsList} setAnimalsList={setAnimalsList} setRows={setRows} getAllAnimals={() => getAllAnimals()}/>
                 </TabPanel>
                 <TabPanel value={value} index={1} dir={theme.direction}>
-                    <CreateDrive/>
+                    <CreateAnimalProfile getAllAnimals={() => getAllAnimals()}/>
                 </TabPanel>
             </SwipeableViews>
         </TabContext>
     );
 };
 
-export default Drive;
+export default AnimalProfile;

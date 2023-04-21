@@ -25,6 +25,8 @@ import theme from "../../../theme";
 import CustomDialog from "../../../components/CustomDialog";
 import moment from "moment";
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import axios from "axios";
+import {BASE_URL} from "../../../config/defaults";
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -84,44 +86,69 @@ const scheduleHeadCells = [
 ];
 
 function UsersTableBody(props) {
-    const {id, row, role} = props;
+    const {id, row, role, getAllProfiles} = props;
     const {enqueueSnackbar} = useSnackbar();
 
     //dialog
     const [collectionDeleteDialogOpen, setCollectionDeleteDialogOpen] = React.useState(false);
-    const [scheduleDeleteDialogOpen, setScheduleDeleteDialogOpen] = React.useState(false);
-    const [scheduleDialogOpen, setScheduleDialogOpen] = React.useState(false);
+    const [collectionUpdateDialogOpen, setCollectionUpdateDialogOpen] = React.useState(false);
 
     const deleteCollection = async (row) => {
-        const docRef = doc(db, "collection", row.id);
-        await deleteDoc(docRef).then(() => {
+        await axios.delete(`${BASE_URL}profile/delete/${row._id}`).then(() => {
                 setCollectionDeleteDialogOpen(false);
-                enqueueSnackbar("Users deleted successfully!", {variant: "success"})
+                enqueueSnackbar("Challenge deleted successfully!", {variant: "success"})
+                getAllProfiles()
             }
         );
+    }
+
+    const updateCollection = async (row) => {
+        console.log("UPDATE USER : ", row)
+        const formData = {
+            name: row.name,
+            email: row.email,
+            contactNo: row.contactNo,
+            password: row.password,
+            type: row.type,
+            adminApproval: true
+        }
+
+        await axios.put(`${BASE_URL}profile/update/${row._id}`, formData)
+            .then((res) => {
+                setCollectionDeleteDialogOpen(false);
+                enqueueSnackbar("Done", {variant: "success"});
+                getAllProfiles()
+            }).catch((err) => {
+            })
     }
 
     return (
         <React.Fragment>
             <TableRow sx={{'& > *': {borderBottom: 'unset'}}}>
-                {row.adminApproval ?
-                    <TableCell align="left">{moment(row.approvedDateTime.toDate()).format('MMMM Do YYYY, h:mm a')}</TableCell>
-                    :
-                    <TableCell align="left">{moment(row.registerDateTime.toDate()).format('MMMM Do YYYY, h:mm a')}</TableCell>
-                }
-                <TableCell align="left">
-                    {row.username}
-                </TableCell>
+
+
                 <TableCell align="left">{row.name}</TableCell>
-                {id === "Pending" &&<TableCell align="left">{row.email}</TableCell>}
-                {id === "Approved" &&<TableCell align="left">{row.ranking}</TableCell>}
+                <TableCell align="left">{row.email}</TableCell>
                 <TableCell align="left">
-                    <Fab size="small" aria-label="edit"
-                         sx={{marginRight: 1, color: "#F18628", backgroundColor: "#fff"}}
-                         onClick={() => setScheduleDialogOpen(true)}
+                    {row.contactNo}
+                </TableCell>
+                <TableCell align="left">
+                    {row.type}
+                </TableCell>
+                <TableCell align="left">
+                    {!row.adminApproval && <Fab size="small" aria-label="edit"
+                          sx={{marginRight: 1, color: "#000", backgroundColor: "#fff"}}
+                          onClick={() => setCollectionUpdateDialogOpen(true)}
                     >
-                        <ArrowForwardRoundedIcon/>
+                        <EditIcon/>
+                    </Fab>}
+                    <Fab size="small" aria-label="edit"
+                         sx={{marginRight: 1, color: "#ff0000", backgroundColor: "#fff"}}
+                         onClick={() => setCollectionDeleteDialogOpen(true)}
+                    >
+                        <DeleteForeverRoundedIcon/>
                     </Fab>
+
                 </TableCell>
             </TableRow>
 
@@ -144,34 +171,25 @@ function UsersTableBody(props) {
                 </DialogActions>
             </Dialog>
 
-            {/*-----------Delete Dialog UserView --------*/}
+            {/*-----------Update Dialog UserView --------*/}
             <Dialog
-                open={scheduleDeleteDialogOpen}
+                open={collectionUpdateDialogOpen}
                 keepMounted
-                onClose={() => setScheduleDeleteDialogOpen(false)}
+                onClose={() => setCollectionUpdateDialogOpen(false)}
                 aria-describedby="alert-dialog-slide-description"
             >
-                <DialogTitle>{"Delete item"}</DialogTitle>
+                <DialogTitle>{"Update User"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-slide-description">
-                        Are you sure you want to delete the item ?
+                        Are you sure you want to approve this admin ?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setScheduleDeleteDialogOpen(false)} variant={"outlined"}>{"No thanks"}</Button>
-                    {/*<Button onClick={() => deleteSchedule()} variant={"contained"}>{"Delete"}</Button>*/}
+                    <Button onClick={() => setCollectionUpdateDialogOpen(false)} variant={"outlined"}>{"No"}</Button>
+                    <Button onClick={() => updateCollection(row)} variant={"contained"}>{"Yes"}</Button>
                 </DialogActions>
             </Dialog>
 
-            {/*---------UserView Dialog----------*/}
-            <CustomDialog
-                fullScreen
-                closeBtn
-                open={scheduleDialogOpen} title={"UserView"}
-                onClose={() => setScheduleDialogOpen(false)}
-            >
-                <UserView rowData={row} role={role} setScheduleDialogOpen={setScheduleDialogOpen}/>
-            </CustomDialog>
         </React.Fragment>
     );
 }

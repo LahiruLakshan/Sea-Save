@@ -18,7 +18,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import TablePagination from "@mui/material/TablePagination";
 import CustomDialog from "../../../components/CustomDialog";
-import CreateRegulation from "./CreateRegulation";
+import CreateForum from "./CreateForum";
 
 const collectionMenuItems = [
     {id: 0, value: "all", text: "All"},
@@ -71,7 +71,7 @@ const collectionHeadCells = [
 
 ];
 
-const RegulationTable = ({name}) => {
+const ForumTable = ({name}) => {
 
     const {enqueueSnackbar} = useSnackbar();
     const [collectionList, setCollectionList] = useState([]);
@@ -122,7 +122,7 @@ const RegulationTable = ({name}) => {
 
     //start load user data
     useEffect(() => {
-        const colRef = collection(db, "regulation");
+        const colRef = collection(db, "forum");
         onSnapshot(
             colRef,
             (snapShot) => {
@@ -159,10 +159,10 @@ const RegulationTable = ({name}) => {
     };
 
     const deleteCollection = async (row) => {
-        const docRef = doc(db, "regulation", row.id);
+        const docRef = doc(db, "forum", row.id);
         await deleteDoc(docRef).then(() => {
                 setRegulationDeleteDialogOpen(false);
-                enqueueSnackbar("Regulation deleted successfully!", {variant: "success"})
+                enqueueSnackbar("Forum deleted successfully!", {variant: "success"})
             }
         );
     }
@@ -253,11 +253,11 @@ const RegulationTable = ({name}) => {
             </Dialog>
             <CustomDialog
                 onClose={handleClose} closeBtn
-                open={open} title={"Edit Regulation"}>
-                <CreateRegulation rowData={rowData} name={name} onClose={handleClose}/>
+                open={open} title={"Edit Forum"}>
+                <CreateForum rowData={rowData} name={name} onClose={handleClose}/>
             </CustomDialog>
         </Box>
     );
 };
 
-export default RegulationTable;
+export default ForumTable;

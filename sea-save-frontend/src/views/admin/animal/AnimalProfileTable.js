@@ -15,80 +15,68 @@ import {Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText,
 import {useSnackbar} from "notistack";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import {getComparator, stableSort} from "../../../utills/UtilFunction";
+import axios from "axios";
+import {BASE_URL} from "../../../config/defaults";
+import CustomDialog from "../../../components/CustomDialog";
+import CreateChallenge from "../challenge/CreateChallenge";
+import CreateAnimalProfile from "./CreateAnimalProfile";
+import EditIcon from "@mui/icons-material/Edit";
 
 const collectionMenuItems = [
     {id: 0, value: "all", text: "All"},
-    {id: 1, value: "companyName", text: "Company Name"},
-    {id: 2, value: "branchName", text: "Drive City"},
-    {id: 3, value: "advertisementName", text: "Advertisement Name"},
+    {id: 1, value: "name", text: "Name"},
+    {id: 2, value: "description", text: "Description"},
+    {id: 2, value: "mainThreat", text: "Main Threat"},
 ];
 const collectionHeadCells = [
     {
-        id: 'thumbnail',
-        numeric: true,
-        disablePadding: false,
-        align: "left",
-        sort: false,
-        label: 'Thumbnail',
-    },
-    {
-        id: 'advertisementName',
-        numeric: false,
-        disablePadding: true,
-        align: "left",
-        sort: true,
-        label: 'Advertisement Name',
-    },
-    {
-        id: 'fileType',
-        numeric: false,
-        disablePadding: true,
-        align: "left",
-        sort: true,
-        label: 'File Type',
-    },
-    {
-        id: 'orientation',
-        numeric: false,
-        disablePadding: true,
-        align: "left",
-        sort: true,
-        label: 'Orientation',
-    },
-    {
-        id: 'companyName',
+        id: 'image',
         numeric: true,
         disablePadding: false,
         align: "left",
         sort: true,
-        label: 'Company Name',
+        label: '',
     },
     {
-        id: 'branchName',
+        id: 'name',
         numeric: true,
         disablePadding: false,
         align: "left",
         sort: true,
-        label: 'Drive City',
+        label: 'Name',
     },
     {
-        id: 'delete',
+        id: 'mainThreat',
         numeric: true,
         disablePadding: false,
         align: "left",
-        sort: false,
-        label: 'Delete',
+        sort: true,
+        label: 'Main Threat',
+    },
+    {
+        id: 'description',
+        numeric: true,
+        disablePadding: false,
+        align: "left",
+        sort: true,
+        label: 'Description',
     },
 
+    {
+        id: 'options',
+        numeric: true,
+        disablePadding: false,
+        align: "center",
+        sort:false,
+        label: 'Edit/Delete',
+    }
 
 ];
 
-const AdvertisementTable = () => {
+const AnimalProfileTable = ({ setRows, rows, animalsList, getAllAnimals, setAnimalsList}) => {
 
     const {enqueueSnackbar} = useSnackbar();
-    const [collectionList, setCollectionList] = useState([]);
     const [filterValue, setFilterValue] = React.useState('all');
-    const [rows, setRows] = useState([]);
     const [row, setRow] = useState([]);
     //Modal
     const [rowData, setRowData] = React.useState("");
@@ -108,16 +96,16 @@ const AdvertisementTable = () => {
     //search functions
     const requestSearch = (searchedVal) => {
         let keyword = searchedVal.target.value;
-        let newData = collectionList.filter(item => {
+        let newData = animalsList.filter(item => {
             // console.log("requestSearch : ", item.firstName)
             if (keyword === "") return item;
-            else if ((item.advertisementName.toLowerCase().includes(keyword.toLowerCase()) || item.companyName.toLowerCase().includes(keyword.toLowerCase()) || item.branchName.toLowerCase().includes(keyword.toLowerCase())) && filterValue === "all") {
+            else if ((item.name.toLowerCase().includes(keyword.toLowerCase()) || item.mainThreat.toLowerCase().includes(keyword.toLowerCase()) || item.description.toLowerCase().includes(keyword.toLowerCase()) || item.mainThreat.toLowerCase().includes(keyword.toLowerCase())) && filterValue === "all") {
                 return item;
-            } else if (item.advertisementName.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "advertisementName") {
+            } else if (item.name.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "name") {
                 return item;
-            } else if (item.companyName.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "companyName") {
+            } else if (item.description.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "description") {
                 return item;
-            } else if (item.branchName.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "branchName") {
+            } else if (item.mainThreat.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "mainThreat") {
                 return item;
             }
 
@@ -128,28 +116,6 @@ const AdvertisementTable = () => {
         setFilterValue(event.target.value);
     };
 
-
-    //start load user data
-    useEffect(() => {
-        const colRef = collection(db, "advertisement");
-        onSnapshot(
-            colRef,
-            (snapShot) => {
-                let list = [];
-                snapShot.docs.forEach((doc) => {
-                    list.push({id: doc.id, ...doc.data()});
-                });
-                setCollectionList(list);
-                setRows(list);
-                console.log("-----setCompanyList---- ");
-            },
-            (error) => {
-                console.log(error);
-            }
-        )
-    }, [])
-
-
     //pagination functions
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -159,22 +125,27 @@ const AdvertisementTable = () => {
         setPage(0);
     };
 
+    // modal actions
+    const handleClose = () => setOpen(false);
+    const handleOpen = (row) => {
+        console.log("setRowData : ", row);
+        setRowData(row);
+        setOpen(true);
+    };
+
     const deleteCollection = async (row) => {
 
-        console.log("Delete Ad :", row.file)
-
-        const docRef = doc(db, "advertisement", row.id);
-        await deleteDoc(docRef).then(() => {
+        await axios.delete(`${BASE_URL}animal/delete/${row._id}`).then(() => {
                 setCollectionDeleteDialogOpen(false);
-                enqueueSnackbar("Advertisement deleted successfully!", {variant: "success"})
+                enqueueSnackbar("Animal deleted successfully!", {variant: "success"})
+                getAllAnimals()
             }
         );
-        // setCollectionDeleteDialogOpen(false);
     }
     return (
         <Box sx={{width: '100%',}}>
             <Paper sx={{width: '100%', mb: 2,}}>
-                <EnhancedTableToolbar tableName={"Advertisement Table"} menuItems={collectionMenuItems}
+                <EnhancedTableToolbar tableName={"AnimalProfile Table"} menuItems={collectionMenuItems}
                                       requestSearch={requestSearch}
                                       handleChange={handleChange} filter={filterValue}/>
                 <TableContainer sx={{maxHeight: "55vh"}}>
@@ -193,31 +164,23 @@ const AdvertisementTable = () => {
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => (
                                         <TableRow key={index} sx={{'& > *': {borderBottom: 'unset'}}}>
-                                            {
-                                                row.fileType === "image" ?
-                                                    <TableCell
-                                                               align="left">
-                                                        <Avatar src={row.file} onClick={() => window.open(row.file, "_blank")} sx={{width: 56, height: 56, cursor:"pointer"}}/>
-                                                    </TableCell>
-                                                    :
-                                                    <TableCell
-                                                               align="left">
-                                                        <Avatar sx={{width: 56, height: 56, cursor:"pointer"}}
-                                                                src={row.thumbnail}
-                                                                onClick={() => window.open(row.file, "_blank")}>
-                                                            {/*<video width={56} height={56} src={row.file}/>*/}
-                                                        </Avatar>
-                                                    </TableCell>}
-
-                                            <TableCell align="left">{row.advertisementName}</TableCell>
-                                            <TableCell align="left">{row.fileType}</TableCell>
-                                            <TableCell align="left">{row.orientation}</TableCell>
-                                            <TableCell component="th" scope="row">
-                                                {row.companyName}
+                                            <TableCell
+                                                align="left">
+                                                <Avatar src={row.imageUrl} onClick={() => window.open(row.imageUrl, "_blank")} sx={{width: 56, height: 56, cursor:"pointer"}}/>
                                             </TableCell>
-                                            <TableCell align="left">{row.branchName}</TableCell>
+                                            <TableCell align="left">{row.name}</TableCell>
+                                            <TableCell align="left">{row.mainThreat}</TableCell>
+                                            <TableCell component="th" scope="row">
+                                                {row.description}
+                                            </TableCell>
                                             <TableCell align="center">
-                                                <Fab size="small" aria-label="add" sx={{marginLeft: 1, color: "#ff0000", backgroundColor: "#fff"}}
+                                                <Fab size="small" aria-label="edit"
+                                                     sx={{margin: 1, color: "#000000", backgroundColor: "#fff"}}
+                                                     onClick={() => handleOpen(row)}
+                                                >
+                                                    <EditIcon/>
+                                                </Fab>
+                                                <Fab size="small" aria-label="add" sx={{margin: 1, color: "#ff0000", backgroundColor: "#fff"}}
                                                      onClick={() => {
                                                          setRow(row);
                                                          setCollectionDeleteDialogOpen(true);
@@ -260,8 +223,13 @@ const AdvertisementTable = () => {
                     <Button onClick={() => deleteCollection(row)} variant={"contained"}>{"Delete"}</Button>
                 </DialogActions>
             </Dialog>
+            <CustomDialog
+                onClose={handleClose} closeBtn
+                open={open} title={"Edit Animal"}>
+                <CreateAnimalProfile rowData={rowData} onClose={handleClose} getAllAnimals={() => getAllAnimals()}/>
+            </CustomDialog>
         </Box>
     );
 };
 
-export default AdvertisementTable;
+export default AnimalProfileTable;

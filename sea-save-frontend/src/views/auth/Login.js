@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Box, Button, Grid, TextField, Typography} from "@mui/material";
-import logo from "../../assets/svg/logo.svg";
+import logo from "../../assets/images/sea-save-logo.png";
 import {makeStyles} from "@mui/styles";
 import {useHistory} from "react-router-dom";
 import backgroundImage from '../../assets/images/bgv2.jpg';
@@ -9,6 +9,8 @@ import {auth, db} from "../../firebase";
 import {useSnackbar} from "notistack";
 import {useUserContext} from "../../context/UserContext";
 import {collection, onSnapshot} from "firebase/firestore";
+import axios from "axios";
+import {BASE_URL} from "../../config/defaults";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -52,7 +54,7 @@ const Login = (props) => {
     const [requestNewPassword, setRequestNewPassword] = useState(false);
 
     const [values, setValues] = useState(initialFValues);
-    const [adminList, setAdminList] = useState([]);
+    const [userList, setUserList] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
     const classes = useStyles()
     const history = useHistory();
@@ -61,21 +63,12 @@ const Login = (props) => {
 
 
     useEffect(() => {
-        const adminRef = collection(db, "user");
-        onSnapshot(
-            adminRef,
-            (snapShot) => {
-                let list = [];
-                snapShot.docs.forEach((doc) => {
-                    list.push({id: doc.id, ...doc.data()});
-                });
-                setAdminList(list);
-            },
-            (error) => {
-                console.log(error);
-            }
-        )
+        axios.get(`${BASE_URL}profile/`)
+            .then(response => {
+                console.log("profile GET : ", response.data)
 
+                setUserList(response.data);
+            })
     }, []);
 
     const handleInputChange = (field, value) => {
@@ -101,12 +94,12 @@ const Login = (props) => {
         // const email = emailRef.current.value;
         // const password = psdRef.current.value;
         if (email && password) {
-            console.log("adminList :", adminList)
-            adminList.some(element => {
+            console.log("adminList :", userList)
+            userList.some(element => {
                 if (element.email === email) {
-                    if (element.role === "User") {
+                    if (element.type === "User") {
                         signInUser(email, password);
-                    } else if (element.role === "Admin") {
+                    } else if (element.type === "Admin") {
                         if (element.adminApproval) {
                             signInUser(email, password);
                         } else {

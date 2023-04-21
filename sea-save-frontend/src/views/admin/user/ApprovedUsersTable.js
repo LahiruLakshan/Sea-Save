@@ -19,28 +19,12 @@ import moment from "moment";
 
 const collectionMenuItems = [
     {id: 0, value: "all", text: "All"},
-    {id: 1, value: "approvedDateTime", text: "Approved"},
-    {id: 2, value: "username", text: "Users Name"},
-    {id: 3, value: "name", text: "Name"},
-    {id: 4, value: "ranking", text: "Ranking"},
+    {id: 1, value: "name", text: "Name"},
+    {id: 2, value: "email", text: "Email"},
+    {id: 3, value: "contactNo", text: "ContactNo"},
+    {id: 4, value: "type", text: "Type"},
 ];
 const collectionHeadCells = [
-    {
-        id: 'approvedDateTime',
-        numeric: true,
-        disablePadding: false,
-        align: "left",
-        sort: true,
-        label: 'Approved',
-    },
-    {
-        id: 'username',
-        numeric: true,
-        disablePadding: false,
-        align: "left",
-        sort: true,
-        label: 'Users Name',
-    },
     {
         id: 'name',
         numeric: true,
@@ -50,36 +34,51 @@ const collectionHeadCells = [
         label: 'Name',
     },
     {
-        id: 'ranking',
+        id: 'email',
         numeric: true,
         disablePadding: false,
         align: "left",
         sort: true,
-        label: 'Ranking',
+        label: 'Email',
     },
     {
-        id: 'viewMore',
+        id: 'contactNo',
         numeric: true,
         disablePadding: false,
         align: "left",
-        sort: false,
-        label: 'View More',
+        sort: true,
+        label: 'ContactNo',
+    },
+    {
+        id: 'type',
+        numeric: true,
+        disablePadding: false,
+        align: "left",
+        sort: true,
+        label: 'Type',
+    },
+    {
+        id: 'options',
+        numeric: true,
+        disablePadding: false,
+        align: "left",
+        sort: true,
+        label: 'Options',
     },
 
 ];
 
-const ApprovedUsersTable = ({role}) => {
 
-    const [collectionList, setCollectionList] = useState([]);
+const ApprovedUsersTable = ({role, getAllProfiles, profileList, setProfileList, setRows, rows}) => {
+
     const [filterValue, setFilterValue] = React.useState('all');
-    const [rows, setRows] = useState([]);
     //Modal
     const [rowData, setRowData] = React.useState("");
     const [open, setOpen] = React.useState(false);
 
     //sort
-    const [order, setOrder] = React.useState('desc');
-    const [tableOrderBy, setTableOrderBy] = React.useState('approvedDateTime');
+    const [tableOrder, setTableOrder] = React.useState('asc');
+    const [tableOrderBy, setTableOrderBy] = React.useState('registerDateTime');
 
     //pagination
     const [page, setPage] = React.useState(0);
@@ -89,18 +88,16 @@ const ApprovedUsersTable = ({role}) => {
     //search functions
     const requestSearch = (searchedVal) => {
         let keyword = searchedVal.target.value;
-        let newData = collectionList.filter(item => {
+        let newData = profileList.filter(item => {
             console.log("requestSearch : ", item)
             if (keyword === "") return item;
-            else if ((item.username.toLowerCase().includes(keyword.toLowerCase()) || item.name.toLowerCase().includes(keyword.toLowerCase()) || item.ranking.toLowerCase().includes(keyword.toLowerCase())) && filterValue === "all") {
+            else if ((item.contactNo.toLowerCase().includes(keyword.toLowerCase()) || item.type.toLowerCase().includes(keyword.toLowerCase()) || item.name.toLowerCase().includes(keyword.toLowerCase()) || item.email.toLowerCase().includes(keyword.toLowerCase())) && filterValue === "all") {
                 return item;
-            } else if (item.username.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "username") {
+            } else if (item.contactNo.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "contactNo") {
                 return item;
             } else if (item.name.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "name") {
                 return item;
-            } else if (item.ranking.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "ranking") {
-                return item;
-            } else if (moment(item.approvedDateTime.toDate()).format('MMMM Do YYYY, h:mm a').toLowerCase().includes(keyword.toLowerCase()) && filterValue === "approvedDateTime") {
+            } else if (item.email.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "email") {
                 return item;
             }
 
@@ -111,28 +108,6 @@ const ApprovedUsersTable = ({role}) => {
         setFilterValue(event.target.value);
     };
 
-
-    //start load user data
-    useEffect(() => {
-        const colRef = collection(db, "user");
-        const dataQuery = query(colRef,
-            where("adminApproval", "==", true),
-        );
-        onSnapshot(
-            dataQuery,
-            (snapShot) => {
-                let list = [];
-                snapShot.docs.forEach((doc) => {
-                    list.push({id: doc.id, ...doc.data()});
-                });
-                setCollectionList(list);
-                setRows(list);
-            },
-            (error) => {
-                console.log(error);
-            }
-        )
-    }, [])
 
 
     //pagination functions
@@ -154,24 +129,25 @@ const ApprovedUsersTable = ({role}) => {
     return (
         <Box sx={{width: '100%',}}>
             <Paper sx={{width: '100%', mb: 2,}}>
-                <EnhancedTableToolbar tableName={"Approved Users Table"} menuItems={collectionMenuItems}
+                <EnhancedTableToolbar tableName={"Pending Users Table"} menuItems={collectionMenuItems}
                                       requestSearch={requestSearch}
                                       handleChange={handleChange} filter={filterValue}/>
                 <TableContainer sx={{maxHeight: "55vh"}}>
                     <Table aria-label="collapsible table">
                         <EnhancedTableHead
-                            order={order}
+                            order={tableOrder}
                             orderBy={tableOrderBy}
-                            setOrder={setOrder}
+                            setOrder={setTableOrder}
                             setOrderBy={setTableOrderBy}
                             spaceCell={false}
                             headCells={collectionHeadCells}
                         />
                         <TableBody>
-                            {stableSort(rows, getComparator(order, tableOrderBy))
+                            {stableSort(rows, getComparator(tableOrder, tableOrderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .filter((value) => value.adminApproval === false)
                                 .map((row, index) => (
-                                    <UsersTableBody id={"Approved"} key={row.name} row={row} handleOpen={handleOpen}
+                                    <UsersTableBody getAllProfiles={getAllProfiles} id={"Pending"} key={row.name} row={row} handleOpen={handleOpen}
                                                     stableSort={stableSort} getComparator={getComparator} role={role}/>
                                 ))}
 

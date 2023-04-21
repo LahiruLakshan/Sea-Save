@@ -1,22 +1,39 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTheme} from "@mui/material/styles";
-import {auth} from "../../../firebase";
 import TabContext from "@mui/lab/TabContext";
 import Box from "@mui/material/Box";
 import TabList from "@mui/lab/TabList";
 import Tab from "@mui/material/Tab";
 import SwipeableViews from "react-swipeable-views";
 import TabPanel from "@mui/lab/TabPanel";
-import AlbumsTable from "./AlbumsTable";
+import CreateChallenge from "./CreateChallenge";
+import ChallengeTable from "./ChallengeTable";
+import axios from "axios";
+import {BASE_URL} from "../../../config/defaults";
 
-const Album = ({role}) => {
-
+const Challenge = () => {
     const [value, setValue] = React.useState(0);
     const theme = useTheme();
+    const [rows, setRows] = useState([]);
+    const [challengesList, setChallengesList] = useState([]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+    useEffect(() => {
+        console.log("//start load user data ")
+        getAllChallenges();
+
+    }, [])
+    const getAllChallenges = async () => {
+        await axios.get(`${BASE_URL}challenge/`)
+            .then(response => {
+                console.log("Challenges GET : ", response.data)
+
+                setChallengesList(response.data);
+                setRows(response.data);
+            })
+    }
 
     function a11yProps(index) {
         return {
@@ -28,18 +45,14 @@ const Album = ({role}) => {
     const handleChangeIndex = (index) => {
         setValue(index);
     };
-    useEffect(() =>{
-        console.log("auth.currentUser : ", auth.currentUser.email)
-    },[])
 
     return (
         <TabContext value={value} >
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <TabList onChange={handleChange} aria-label="lab API tabs example" textColor="primary"
                          indicatorColor="primary">
-                    {/*<Tab label="Gallery" {...a11yProps(0)} />*/}
-                    <Tab label="Pending" {...a11yProps(0)} />
-                    <Tab label="Approved" {...a11yProps(1)} />
+                    <Tab label="All Challenges" {...a11yProps(1)} />
+                    <Tab label="Create Challenge" {...a11yProps(2)} />
                 </TabList>
             </Box>
             <SwipeableViews
@@ -48,14 +61,14 @@ const Album = ({role}) => {
                 onChangeIndex={handleChangeIndex}
             >
                 <TabPanel value={value} index={0} dir={theme.direction}>
-                    {value === 0 && <AlbumsTable role={role} status={false}/>}
+                    <ChallengeTable rows={rows} challengesList={challengesList} setChallengesList={setChallengesList} setRows={setRows} getAllChallenges={() => getAllChallenges()}/>
                 </TabPanel>
                 <TabPanel value={value} index={1} dir={theme.direction}>
-                    {value === 1 && <AlbumsTable role={role} status={true}/>}
+                    <CreateChallenge getAllChallenges={() => getAllChallenges()}/>
                 </TabPanel>
             </SwipeableViews>
         </TabContext>
     );
 };
 
-export default Album;
+export default Challenge;

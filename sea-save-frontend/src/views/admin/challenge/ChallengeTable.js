@@ -15,26 +15,20 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import TableRow from "@mui/material/TableRow";
 import CustomDialog from "../../../components/CustomDialog";
-import CreateDrive from "./CreateDrive";
+import CreateChallenge from "./CreateChallenge";
 import {useSnackbar} from "notistack";
 import {getComparator, stableSort} from "../../../utills/UtilFunction";
 import moment from "moment";
+import axios from "axios";
+import {BASE_URL} from "../../../config/defaults";
 
 const collectionMenuItems = [
     {id: 0, value: "all", text: "All"},
     {id: 1, value: "title", text: "Title"},
-    {id: 2, value: "meetingPoint", text: "Meeting Point"},
-    {id: 3, value: "scheduleDateTime", text: "Schedule DateTime"},
+    {id: 2, value: "description", text: "Description"},
 ];
 const collectionHeadCells = [
-    {
-        id: 'scheduleDateTime',
-        numeric: true,
-        disablePadding: false,
-        align: "left",
-        sort: true,
-        label: 'Schedule DateTime',
-    },
+
     {
         id: 'title',
         numeric: true,
@@ -44,12 +38,12 @@ const collectionHeadCells = [
         label: 'Title',
     },
     {
-        id: 'meetingPoint',
+        id: 'description',
         numeric: true,
         disablePadding: false,
         align: "left",
         sort: true,
-        label: 'Meeting Point',
+        label: 'Description',
     },
 
     {
@@ -63,42 +57,39 @@ const collectionHeadCells = [
 
 ];
 
-const DriveTable = () => {
+const ChallengeTable = ({rows, setRows, challengesList, setChallengesList, getAllChallenges}) => {
 
     const {enqueueSnackbar} = useSnackbar();
-    const [collectionList, setCollectionList] = useState([]);
     const [filterValue, setFilterValue] = React.useState('all');
-    const [rows, setRows] = useState([]);
+    const [rowData, setRowData] = React.useState("");
     const [row, setRow] = useState([]);
     //Modal
-    const [rowData, setRowData] = React.useState("");
+
     const [open, setOpen] = React.useState(false);
 
     //sort
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('scheduleDateTime');
+    const [orderBy, setOrderBy] = React.useState('title');
 
     //pagination
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     //dialog
-    const [driveDeleteDialogOpen, setDriveDeleteDialogOpen] = React.useState(false);
+    const [challengeDeleteDialogOpen, setChallengeDeleteDialogOpen] = React.useState(false);
 
 
     //search functions
     const requestSearch = (searchedVal) => {
         let keyword = searchedVal.target.value;
-        let newData = collectionList.filter(item => {
+        let newData = challengesList.filter(item => {
             // console.log("requestSearch : ", item.firstName)
             if (keyword === "") return item;
-            else if ((item.address.toLowerCase().includes(keyword.toLowerCase()) || item.title.toLowerCase().includes(keyword.toLowerCase()) || item.meetingPoint.toLowerCase().includes(keyword.toLowerCase()) || moment(item.scheduleDateTime.toDate()).format('MMMM Do YYYY, h:mm a').toLowerCase().includes(keyword.toLowerCase())) && filterValue === "all") {
-                return item;
-            } else if (moment(item.scheduleDateTime.toDate()).format('MMMM Do YYYY, h:mm a').includes(keyword.toLowerCase()) && filterValue === "scheduleDateTime") {
+            else if ((item.title.toLowerCase().includes(keyword.toLowerCase()) || item.description.toLowerCase().includes(keyword.toLowerCase())) && filterValue === "all") {
                 return item;
             } else if (item.title.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "title") {
                 return item;
-            } else if (item.meetingPoint.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "meetingPoint") {
+            } else if (item.description.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "description") {
                 return item;
             }
 
@@ -110,25 +101,6 @@ const DriveTable = () => {
     };
 
 
-    //start load user data
-    useEffect(() => {
-        const colRef = collection(db, "drive");
-        onSnapshot(
-            colRef,
-            (snapShot) => {
-                let list = [];
-                snapShot.docs.forEach((doc) => {
-                    list.push({id: doc.id, ...doc.data()});
-                });
-                setCollectionList(list);
-                setRows(list);
-                console.log("-----setCompanyList---- ");
-            },
-            (error) => {
-                console.log(error);
-            }
-        )
-    }, [])
 
 
     //pagination functions
@@ -148,11 +120,11 @@ const DriveTable = () => {
         setOpen(true);
     };
 
-    const deleteCollection = async (row) => {
-        const docRef = doc(db, "drive", row.id);
-        await deleteDoc(docRef).then(() => {
-                setDriveDeleteDialogOpen(false);
-                enqueueSnackbar("Drive deleted successfully!", {variant: "success"})
+    const deleteChallenge = async (row) => {
+        await axios.delete(`${BASE_URL}challenge/delete/${row._id}`).then(() => {
+                setChallengeDeleteDialogOpen(false);
+                enqueueSnackbar("Challenge deleted successfully!", {variant: "success"})
+            getAllChallenges()
             }
         );
     }
@@ -160,7 +132,7 @@ const DriveTable = () => {
     return (
         <Box sx={{width: '100%',}}>
            <Paper sx={{width: '100%', mb: 2,}}>
-                    <EnhancedTableToolbar tableName={"Drive Table"} menuItems={collectionMenuItems}
+                    <EnhancedTableToolbar tableName={"Challenge Table"} menuItems={collectionMenuItems}
                                           requestSearch={requestSearch}
                                           handleChange={handleChange} filter={filterValue}/>
                     <TableContainer sx={{maxHeight: "55vh"}}>
@@ -179,22 +151,23 @@ const DriveTable = () => {
                                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                             .map((row, index) => (
                                                 <TableRow sx={{'& > *': {borderBottom: 'unset'}}}>
-                                                    <TableCell align="left">{moment(row.scheduleDateTime.toDate()).format('MMMM Do YYYY, h:mm a')}</TableCell>
                                                     <TableCell component="th" scope="row">
                                                         {row.title}
                                                     </TableCell>
-                                                    <TableCell align="left">{row.meetingPoint}</TableCell>
+                                                    <TableCell component="th" scope="row">
+                                                        {row.description}
+                                                    </TableCell>
                                                     <TableCell align="center">
                                                         <Fab size="small" aria-label="edit"
-                                                             sx={{marginRight: 1, color: "#000000", backgroundColor: "#fff"}}
+                                                             sx={{margin: 1, color: "#000000", backgroundColor: "#fff"}}
                                                              onClick={() => handleOpen(row)}
                                                             >
                                                             <EditIcon/>
                                                         </Fab>
-                                                        <Fab size="small" aria-label="add" sx={{marginLeft: 1, color: "#ff0000", backgroundColor: "#fff"}}
+                                                        <Fab size="small" aria-label="add" sx={{margin: 1, color: "#ff0000", backgroundColor: "#fff"}}
                                                              onClick={() => {
                                                                  setRow(row);
-                                                                 setDriveDeleteDialogOpen(true);
+                                                                 setChallengeDeleteDialogOpen(true);
                                                              }}>
                                                             <DeleteForeverRoundedIcon/>
                                                         </Fab>
@@ -220,9 +193,9 @@ const DriveTable = () => {
                 </Paper>
             {/*-----------Delete Dialog Users --------*/}
             <Dialog
-                open={driveDeleteDialogOpen}
+                open={challengeDeleteDialogOpen}
                 keepMounted
-                onClose={() => setDriveDeleteDialogOpen(false)}
+                onClose={() => setChallengeDeleteDialogOpen(false)}
                 aria-describedby="alert-dialog-slide-description"
             >
                 <DialogTitle>{"Delete item"}</DialogTitle>
@@ -232,17 +205,17 @@ const DriveTable = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setDriveDeleteDialogOpen(false)} variant={"outlined"}>{"No thanks"}</Button>
-                    <Button onClick={() => deleteCollection(row)} variant={"contained"}>{"Delete"}</Button>
+                    <Button onClick={() => setChallengeDeleteDialogOpen(false)} variant={"outlined"}>{"No thanks"}</Button>
+                    <Button onClick={() => deleteChallenge(row)} variant={"contained"}>{"Delete"}</Button>
                 </DialogActions>
             </Dialog>
             <CustomDialog
                 onClose={handleClose} closeBtn
-                open={open} title={"Edit Drive"}>
-                <CreateDrive rowData={rowData} onClose={handleClose}/>
+                open={open} title={"Edit Challenge"}>
+                <CreateChallenge rowData={rowData} onClose={handleClose} getAllChallenges={() => getAllChallenges()}/>
             </CustomDialog>
         </Box>
     );
 };
 
-export default DriveTable;
+export default ChallengeTable;

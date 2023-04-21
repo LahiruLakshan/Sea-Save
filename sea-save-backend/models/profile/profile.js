@@ -6,7 +6,8 @@ const Profile = new Schema({
     email: String,
     contactNo: String,
     password: String,
-    type: String
+    type: String,
+    adminApproval: Boolean
 });
 
 const profile = mongoose.model("profile", Profile );

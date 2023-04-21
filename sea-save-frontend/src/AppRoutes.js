@@ -3,49 +3,46 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import DashboardLayout from "./components/Dashboard/DashboardLayout";
 import Dashboard from "./views/admin/Dashboard";
 import Users from "./views/admin/user/Users";
-import Drive from "./views/admin/drive/Drive";
-import Advertisement from "./views/admin/advertisement/Advertisement";
+import Challenge from "./views/admin/challenge/Challenge";
+import AnimalProfile from "./views/admin/animal/AnimalProfile";
 import Register from "./views/auth/Register";
 import {auth, db} from "./firebase";
 import {collection, onSnapshot} from "firebase/firestore";
-import Regulation from "./views/admin/regulation/Regulation";
-import Album from "./views/admin/album/Album";
+import Forum from "./views/admin/forum/Forum";
+import Animal from "./views/admin/album/Animal";
 import Redirect from "react-router-dom/es/Redirect";
+import axios from "axios";
+import {BASE_URL} from "./config/defaults";
+import Home from "./views/Home";
 
 const AppRoutes = () => {
-    const [adminList, setAdminList] = useState([]);
+    const [userList, setUserList] = useState([]);
     const [name, setName] = useState("Name");
     const [role, setRole] = useState("Role");
+    const [userData, setUserData] = useState([]);
 
     useEffect(() => {
-        const adminRef = collection(db, "user");
-        onSnapshot(
-            adminRef,
-            (snapShot) => {
-                let list = [];
-                snapShot.docs.forEach((doc) => {
-                    list.push({id: doc.id, ...doc.data()});
-                });
-                setAdminList(list);
-            },
-            (error) => {
-                console.log(error);
-            }
-        )
+        axios.get(`${BASE_URL}profile/`)
+            .then(response => {
+                console.log("profile GET : ", response.data)
+
+                setUserList(response.data);
+            })
 
     }, []);
     useEffect(() => {
-        if (adminList.length) {
-            console.log("Admin List : ", adminList)
-            adminList.some(element => {
+        if (userList.length) {
+            console.log("Admin List : ", userList)
+            userList.some(element => {
                 if (element.email === auth.currentUser.email) {
-                    setName(element.username);
-                    setRole(element.role)
+                    setName(element.name);
+                    setRole(element.type);
+                    setUserData(element);
                 }
             })
             console.log("auth.currentUser : ", auth.currentUser.email)
         }
-    }, [adminList])
+    }, [userList])
     useEffect(() => {
         console.log("Role : ", role)
     }, [role])
@@ -53,6 +50,9 @@ const AppRoutes = () => {
 
         <Router>
             <Switch>
+                <Route path="/home">
+                    <Home/>
+                </Route>
                 {/*<Route exact path="/">*/}
                 {/*    <Login companyId={companyId} setCompanyId={setCompanyId}/>*/}
                 {/*</Route>*/}
@@ -63,28 +63,25 @@ const AppRoutes = () => {
                     <Route exact path="/">
                         <Users role={role}/>
                     </Route>
-                    <Route path="/dashboard">
-                        <Dashboard/>
-                    </Route>
                     <Route path="/user">
                         <Users role={role}/>
                     </Route>
-                    <Route path="/advertisement">
-                        <Advertisement/>
+                    <Route path="/challenge">
+                        <Challenge name={name}/>
                     </Route>
-                    <Route path="/drive">
-                        <Drive name={name}/>
+                    <Route path="/animal">
+                        <AnimalProfile name={name}/>
                     </Route>
-                    <Route path="/album">
-                        <Album name={name}/>
-                    </Route>
-                    <Route path="/regulation">
-                        <Regulation name={name}/>
+                    <Route path="/forum">
+                        <Forum name={name}/>
                     </Route>
 
                     <Route render={() => <Redirect to={{pathname: "/"}} />} />
                 </DashboardLayout>
+
+
             </Switch>
+
 
         </Router>
     );

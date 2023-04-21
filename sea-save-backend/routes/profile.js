@@ -8,7 +8,8 @@ router.route("/create").post(async (req, res) => {
         email,
         contactNo,
         password,
-        type
+        type,
+        adminApproval
     } = req.body;
 
     const profile = new Profile({
@@ -16,7 +17,8 @@ router.route("/create").post(async (req, res) => {
         email,
         contactNo,
         password,
-        type
+        type,
+        adminApproval
     });
 
     await profile
@@ -59,7 +61,8 @@ router.route("/update/:id").put(async (req, res) => {
         email,
         contactNo,
         password,
-        type
+        type,
+        adminApproval
     } = req.body;
 
     await Profile.findByIdAndUpdate(id, {
@@ -67,7 +70,8 @@ router.route("/update/:id").put(async (req, res) => {
         email,
         contactNo,
         password,
-        type
+        type,
+        adminApproval
     }) //find the document by and update the relavant data
         .then(() => res.json({ success: true }))
         .catch((error) => res.json({ success: false, Error: error }));

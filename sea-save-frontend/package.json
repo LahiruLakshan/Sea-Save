@@ -22,6 +22,7 @@
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.27",
     "notistack": "^2.0.5",
+    "qs": "^6.11.1",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
     "react-bootstrap": "^2.6.0",

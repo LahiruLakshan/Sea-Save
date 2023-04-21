@@ -21,6 +21,9 @@ import {auth, db} from "../../firebase";
 import {useUserContext} from "../../context/UserContext";
 import {useSnackbar} from "notistack";
 import {addDoc, collection, onSnapshot} from "firebase/firestore";
+import axios from "axios";
+import {BASE_URL} from "../../config/defaults";
+import PhoneInput from "react-phone-input-2";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -59,13 +62,13 @@ const Register = (props) => {
 
     const classes = useStyles()
     const [username, setUsername] = useState();
-    const [firstName, setFirstName] = useState();
+    const [contactNo, setContactNo] = useState();
     const [lastName, setLastName] = useState();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
     const {registerUser} = useUserContext();
-    const [role, setRole] = useState("");
+    const [type, setType] = useState("");
     const [userList, setUserList] = useState([]);
 
     const {enqueueSnackbar} = useSnackbar();
@@ -81,20 +84,13 @@ const Register = (props) => {
             .catch(error => console.log(error))
     }
     useEffect(() => {
-        const userRef = collection(db, "user");
-        onSnapshot(
-            userRef,
-            (snapShot) => {
-                let list = [];
-                snapShot.docs.forEach((doc) => {
-                    list.push({id: doc.id, ...doc.data()});
-                });
-                setUserList(list);
-            },
-            (error) => {
-                console.log(error);
-            }
-        )
+
+        axios.get(`${BASE_URL}profile/`)
+            .then(response => {
+                console.log("profile GET : ", response.data)
+
+                setUserList(response.data);
+            })
 
     }, []);
     const onSubmit = async (e) => {
@@ -116,20 +112,42 @@ const Register = (props) => {
             } else {
                 await registerUser(email, password, username);
                 console.log("register finished")
-                await addDoc(collection(db, "user"), {
-                    username: username.trim(),
-                    email: email.trim(),
-                    role: role,
-                    adminApproval: role !== "Admin"
-                }).then(() => {
-                    console.log("register finished")
-                    setUsername("")
-                    setEmail("")
-                    setRole("")
-                    setLoading(false);
-                })
-                await auth.signOut();
-                history.push("/");
+
+                const formData = {
+                    name: username,
+                    email: email,
+                    contactNo: contactNo,
+                    password: password,
+                    type: type,
+                    adminApproval: type !== "Admin"
+                }
+
+                await axios.post(`${BASE_URL}profile/create`, formData)
+                    .then((res) => {
+                        console.log("profile create RES : ", res)
+                        console.log("register finished")
+                        setUsername("")
+                        setEmail("")
+                        setType("")
+                        setLoading(false);
+                    }).catch((err) => {
+                        console.log("profile create ERRor : ", err)
+                    })
+
+                // await addDoc(collection(db, "user"), {
+                //     username: username.trim(),
+                //     email: email.trim(),
+                //     type: type,
+                //     adminApproval: type !== "Admin"
+                // }).then(() => {
+                //     console.log("register finished")
+                //     setUsername("")
+                //     setEmail("")
+                //     setType("")
+                //     setLoading(false);
+                // })
+                await auth.signOut().then(() => history.push("/"))
+
             }
 
         } else {
@@ -201,20 +219,20 @@ const Register = (props) => {
                                            onInput={(e) => setEmail(e.target.value)}/>
                             </Grid>
 
-                            {/* -----------------------Role---------------------------- */}
+                            {/* -----------------------Type---------------------------- */}
 
                             <Grid container item direction={"column"}>
                                 <Grid item sx={{paddingTop: "20px"}}>
                                     <FormControl margin="dense" fullWidth>
-                                        <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                                        <InputLabel id="demo-simple-select-label">Type</InputLabel>
                                         <Select sx={{width: "100%", minWidth: "150px", borderRadius: "10px"}}
                                                 variant="outlined"
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
-                                                value={role}
-                                                label="Role"
+                                                value={type}
+                                                label="Type"
                                                 onChange={(e) => {
-                                                    setRole(e.target.value);
+                                                    setType(e.target.value);
                                                 }}
                                         >
 
@@ -225,19 +243,16 @@ const Register = (props) => {
                                 </Grid>
                             </Grid>
 
-                            {/*<Grid item sx={{paddingTop: "20px"}}>*/}
-                            {/*    <Typography sx={{color: "#000000"}}>Phone</Typography>*/}
-                            {/*    <Grid item sx={{}}>*/}
-                            {/*        /!*<TextField margin="dense" id="outlined-basic" color={"secondary"}*!/*/}
-                            {/*        /!*           sx={{width: "100%"}}*!/*/}
-                            {/*        /!*           variant="outlined"/>*!/*/}
-                            {/*        <PhoneInput placeholder={"Phone"}*/}
-                            {/*            country={"lk"}*/}
-                            {/*            // value={this.state.phone}*/}
-                            {/*            // onChange={phone => this.setState({ phone })}*/}
-                            {/*        />*/}
-                            {/*    </Grid>*/}
-                            {/*</Grid>*/}
+                            <Grid container item direction={"row"}>
+                                <Grid item lg={12} md={12} sm={12} xs={12} sx={{paddingTop: "20px"}}>
+                                    <TextField margin="dense" id="outlined-basic"
+                                               sx={{width: "100%", minWidth: "150px"}}
+                                               variant="outlined"
+                                               label={"ContactNo"}
+                                               value={contactNo}
+                                               onInput={(e) => setContactNo(e.target.value)}/>
+                                </Grid>
+                            </Grid>
                             <Grid container item direction={"row"}>
                                 <Grid item lg={12} md={12} sm={12} xs={12} sx={{paddingTop: "20px"}}>
                                     <TextField margin="dense" id="outlined-basic"

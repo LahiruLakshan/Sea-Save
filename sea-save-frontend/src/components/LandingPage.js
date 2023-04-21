@@ -1,6 +1,6 @@
 import React from 'react';
 import {Grid} from "@mui/material";
-import logo from "../assets/svg/logo.svg";
+import logo from "../assets/images/sea-save-logo.png";
 import CustomIndicator from "./CustomIndicator";
 
 const LandingPage = () => {
