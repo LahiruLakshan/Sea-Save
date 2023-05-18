@@ -146,7 +146,7 @@ const Register = (props) => {
                 //     setType("")
                 //     setLoading(false);
                 // })
-                await auth.signOut().then(() => history.push("/"))
+                await auth.signOut().then(() => history.push("/home"))
 
             }
 

@@ -13,7 +13,10 @@ import Animal from "./views/admin/album/Animal";
 import Redirect from "react-router-dom/es/Redirect";
 import axios from "axios";
 import {BASE_URL} from "./config/defaults";
-import Home from "./views/Home";
+import Home from "./views/user/Home";
+import ChallengeView from "./views/user/ChallengeView";
+import AnimalProfileView from "./views/user/AnimalProfileView";
+import ForumView from "./views/user/ForumView";
 
 const AppRoutes = () => {
     const [userList, setUserList] = useState([]);
@@ -50,8 +53,17 @@ const AppRoutes = () => {
 
         <Router>
             <Switch>
-                <Route path="/home">
+                <Route exact path="/home">
                     <Home/>
+                </Route>
+                <Route path="/challenge_view">
+                    <ChallengeView/>
+                </Route>
+                <Route path="/animal_profile">
+                    <AnimalProfileView/>
+                </Route>
+                <Route path="/forum_view">
+                    <ForumView/>
                 </Route>
                 {/*<Route exact path="/">*/}
                 {/*    <Login companyId={companyId} setCompanyId={setCompanyId}/>*/}
@@ -60,9 +72,9 @@ const AppRoutes = () => {
                     <Route path="/register">
                         <Register/>
                     </Route>
-                    <Route exact path="/">
-                        <Users role={role}/>
-                    </Route>
+                    {/*<Route path="/">*/}
+                    {/*    <Users role={role}/>*/}
+                    {/*</Route>*/}
                     <Route path="/user">
                         <Users role={role}/>
                     </Route>
@@ -76,7 +88,10 @@ const AppRoutes = () => {
                         <Forum name={name}/>
                     </Route>
 
-                    <Route render={() => <Redirect to={{pathname: "/"}} />} />
+                    {role === "User" && <Route render={() => <Redirect to={{pathname: "/home"}}/>}/>}
+                    {role === "Admin" && <Route render={() => <Redirect to={{pathname: "/user"}}/>}/>}
+                    {role === "Super Admin" && <Route render={() => <Redirect to={{pathname: "/user"}}/>}/>}
+
                 </DashboardLayout>
 
 

@@ -94,9 +94,10 @@ const Login = (props) => {
         // const email = emailRef.current.value;
         // const password = psdRef.current.value;
         if (email && password) {
-            console.log("adminList :", userList)
             userList.some(element => {
+                console.log("element.email :", element.email)
                 if (element.email === email) {
+                    console.log("element.email :", element.email)
                     if (element.type === "User") {
                         signInUser(email, password);
                     } else if (element.type === "Admin") {
