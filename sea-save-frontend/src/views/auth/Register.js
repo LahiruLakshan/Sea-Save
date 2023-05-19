@@ -3,9 +3,9 @@ import {
     Box,
     Button,
     FormControl,
-    Grid,
+    Grid, InputAdornment,
     InputLabel,
-    MenuItem,
+    MenuItem, OutlinedInput,
     Paper,
     Select,
     TextField,
@@ -24,6 +24,8 @@ import {addDoc, collection, onSnapshot} from "firebase/firestore";
 import axios from "axios";
 import {BASE_URL} from "../../config/defaults";
 import PhoneInput from "react-phone-input-2";
+import IconButton from "@mui/material/IconButton";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -70,8 +72,13 @@ const Register = (props) => {
     const {registerUser} = useUserContext();
     const [type, setType] = useState("");
     const [userList, setUserList] = useState([]);
-
+    const [showPassword, setShowPassword] = React.useState(false);
     const {enqueueSnackbar} = useSnackbar();
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
 
     const register = () => {
         console.log(email);
@@ -253,16 +260,48 @@ const Register = (props) => {
                                                onInput={(e) => setContactNo(e.target.value)}/>
                                 </Grid>
                             </Grid>
-                            <Grid container item direction={"row"}>
-                                <Grid item lg={12} md={12} sm={12} xs={12} sx={{paddingTop: "20px"}}>
-                                    <TextField margin="dense" id="outlined-basic"
-                                               sx={{width: "100%", minWidth: "150px"}}
-                                               variant="outlined"
-                                               label={"Password"}
-                                               value={password}
-                                               onInput={(e) => setPassword(e.target.value)}/>
+
+                            <Grid container item direction={"column"}>
+                                <Grid item sx={{paddingTop: "20px"}}>
+                                    {/*<Typography sx={{color: "#7b92ec",}}>Password</Typography>*/}
+                                    <Grid item sx={{}}>
+                                        <FormControl sx={{width: "100%", minWidth: "150px"}} variant="outlined">
+                                            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                                            <OutlinedInput
+                                                onInput={(e) => setPassword(e.target.value)}
+                                                value={password}
+                                                sx={{borderRadius:"10px"}}
+                                                id="outlined-adornment-password"
+                                                type={showPassword ? 'text' : 'password'}
+                                                endAdornment={
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            aria-label="toggle password visibility"
+                                                            onClick={handleClickShowPassword}
+                                                            onMouseDown={handleMouseDownPassword}
+                                                            edge="end"
+                                                        >
+                                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                }
+                                                label="Password"
+                                            />
+                                        </FormControl>
+                                    </Grid>
                                 </Grid>
                             </Grid>
+
+                            {/*<Grid container item direction={"row"}>*/}
+                            {/*    <Grid item lg={12} md={12} sm={12} xs={12} sx={{paddingTop: "20px"}}>*/}
+                            {/*        <TextField margin="dense" id="outlined-basic"*/}
+                            {/*                   sx={{width: "100%", minWidth: "150px"}}*/}
+                            {/*                   variant="outlined"*/}
+                            {/*                   label={"Password"}*/}
+                            {/*                   value={password}*/}
+                            {/*                   onInput={(e) => setPassword(e.target.value)}/>*/}
+                            {/*    </Grid>*/}
+                            {/*</Grid>*/}
                             <Grid sx={{paddingY: "30px"}}>
                                 {/*<Button variant={"contained"} sx={{width: "100%"}}>Login</Button>*/}
                                 {/*<Link to="/dashboard">*/}

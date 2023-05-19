@@ -1,5 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {Box, Button, Grid, TextField, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    FormControl,
+    Grid,
+    InputAdornment,
+    InputLabel,
+    OutlinedInput,
+    TextField,
+    Typography
+} from "@mui/material";
 import logo from "../../assets/images/sea-save-logo.png";
 import {makeStyles} from "@mui/styles";
 import {useHistory} from "react-router-dom";
@@ -11,6 +21,8 @@ import {useUserContext} from "../../context/UserContext";
 import {collection, onSnapshot} from "firebase/firestore";
 import axios from "axios";
 import {BASE_URL} from "../../config/defaults";
+import IconButton from "@mui/material/IconButton";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -52,6 +64,7 @@ const Login = (props) => {
     const [password, setPassword] = useState();
     const [newPassword, setNewPassword] = useState('');
     const [requestNewPassword, setRequestNewPassword] = useState(false);
+    const [showPassword, setShowPassword] = React.useState(false);
 
     const [values, setValues] = useState(initialFValues);
     const [userList, setUserList] = useState([]);
@@ -61,6 +74,11 @@ const Login = (props) => {
 
     const { signInUser, forgotPassword } = useUserContext();
 
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
 
     useEffect(() => {
         axios.get(`${BASE_URL}profile/`)
@@ -204,16 +222,49 @@ const Login = (props) => {
                                 <Grid item sx={{paddingTop: "20px"}}>
                                     {/*<Typography sx={{color: "#7b92ec",}}>Password</Typography>*/}
                                     <Grid item sx={{}}>
-                                        <TextField margin="dense" id="outlined-basic"
-                                                   sx={{width: "100%", minWidth: "150px"}}
-                                                   variant="outlined" label={"Password"}
-                                                   value={password}
-                                                   type={"password"}
-                                                   onInput={(e) => setPassword(e.target.value)}/>
-                                        {/*<CustomTextField/>*/}
+                                        <FormControl sx={{width: "100%", minWidth: "150px"}} variant="outlined">
+                                            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                                            <OutlinedInput
+                                                onInput={(e) => setPassword(e.target.value)}
+                                                value={password}
+                                                sx={{borderRadius:"10px"}}
+                                                id="outlined-adornment-password"
+                                                type={showPassword ? 'text' : 'password'}
+                                                endAdornment={
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            aria-label="toggle password visibility"
+                                                            onClick={handleClickShowPassword}
+                                                            onMouseDown={handleMouseDownPassword}
+                                                            edge="end"
+                                                        >
+                                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                }
+                                                label="Password"
+                                            />
+                                        </FormControl>
                                     </Grid>
                                 </Grid>
                             </Grid>
+
+                            {/*/!* -----------------------passowrd---------------------------- *!/*/}
+
+                            {/*<Grid container item direction={"column"}>*/}
+                            {/*    <Grid item sx={{paddingTop: "20px"}}>*/}
+                            {/*        /!*<Typography sx={{color: "#7b92ec",}}>Password</Typography>*!/*/}
+                            {/*        <Grid item sx={{}}>*/}
+                            {/*            <TextField margin="dense" id="outlined-basic"*/}
+                            {/*                       sx={{width: "100%", minWidth: "150px"}}*/}
+                            {/*                       variant="outlined" label={"Password"}*/}
+                            {/*                       value={password}*/}
+                            {/*                       type={"password"}*/}
+                            {/*                       onInput={(e) => setPassword(e.target.value)}/>*/}
+                            {/*            /!*<CustomTextField/>*!/*/}
+                            {/*        </Grid>*/}
+                            {/*    </Grid>*/}
+                            {/*</Grid>*/}
 
 
                             {requestNewPassword && <Grid container item direction={"column"}>

@@ -7,7 +7,7 @@ import logo from "../../assets/images/se-save-home.jpg"
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {makeStyles} from "@mui/styles";
-import CustomFooter from "../../components/CustomFooter";
+import CustomFooter from "../../components/footer/CustomFooter";
 
 
 

@@ -1,0 +1,377 @@
+@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css);
+
+.footer-distributed {
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    width: 100%;
+    text-align: left;
+    font: bold 16px sans-serif;
+    padding: 55px 50px;
+}
+
+.footer-distributed .footer-left,
+.footer-distributed .footer-center,
+.footer-distributed .footer-right {
+    display: inline-block;
+    vertical-align: top;
+}
+
+/* Footer left */
+
+.footer-distributed .footer-left {
+    width: 40%;
+}
+
+/* The company logo */
+
+.footer-distributed h3 {
+    color: #ffffff;
+    font: normal 36px 'Open Sans', cursive;
+    margin: 0;
+}
+
+.footer-distributed h3 span {
+    color: lightseagreen;
+}
+
+/* Footer links */
+
+.footer-distributed .footer-links {
+    color: #000000;
+    margin: 20px 0 12px;
+    padding: 0;
+}
+
+.footer-distributed .footer-links a {
+    display: inline-block;
+    line-height: 1.8;
+    font-weight: 400;
+    text-decoration: none;
+    color: inherit;
+}
+
+.footer-distributed .footer-company-name {
+    color: #222;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0;
+}
+
+/* Footer Center */
+
+.footer-distributed .footer-center {
+    width: 35%;
+}
+
+.footer-distributed .footer-center i {
+    /*background-color:  #33383b;*/
+    color: #000000;
+    font-size: 25px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 42px;
+    margin: 10px 15px;
+    vertical-align: middle;
+}
+
+.footer-distributed .footer-center i.fa-envelope {
+    font-size: 17px;
+    line-height: 38px;
+}
+
+.footer-distributed .footer-center p {
+    display: inline-block;
+    color: #000000;
+    font-weight: 400;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.footer-distributed .footer-center p span {
+    display: block;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 2;
+}
+
+.footer-distributed .footer-center p a {
+    color: lightseagreen;
+    text-decoration: none;;
+}
+
+.footer-distributed .footer-links a:before {
+    content: "|";
+    font-weight: 300;
+    font-size: 20px;
+    left: 0;
+    color: #000000;
+    display: inline-block;
+    padding: 5px;
+}
+
+.footer-distributed .footer-links .link-1:before {
+    content: none;
+}
+
+/* Footer Right */
+
+.footer-distributed .footer-right {
+    width: 20%;
+}
+
+.footer-distributed .footer-company-about {
+    line-height: 20px;
+    color: #92999f;
+    font-size: 13px;
+    font-weight: normal;
+    margin: 0;
+}
+
+.footer-distributed .footer-company-about span {
+    display: block;
+    color: #666;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.footer-distributed .footer-icons {
+    margin-top: 25px;
+}
+
+.footer-distributed .footer-icons a {
+    /*display: inline-block;*/
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    background-color: #33383b;
+    border-radius: 2px;
+
+    font-size: 20px;
+    color: #ffffff;
+    text-align: center;
+    line-height: 35px;
+
+    margin-right: 3px;
+    margin-bottom: 5px;
+}
+
+/* If you don't want the footer to be responsive, remove these media queries */
+
+@media (max-width: 880px) {
+
+    .footer-distributed {
+        font: bold 14px sans-serif;
+    }
+
+    .footer-distributed .footer-left,
+    .footer-distributed .footer-center,
+    .footer-distributed .footer-right {
+        display: block;
+        width: 100%;
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+    .footer-distributed .footer-center i {
+        margin-left: 0;
+        text-align: center;
+
+    }
+
+}
+
+a {
+    text-decoration: none;
+    color: #000000;
+}
+
+p > a:hover {
+    color: #d9d9d9;
+    text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 1% 0 1% 0;
+}
+
+._12 {
+    font-size: 1.2em;
+}
+
+._14 {
+    font-size: 1.4em;
+}
+
+ul {
+    padding: 0;
+    list-style: none;
+}
+
+.footer-social-icons {
+    width: 350px;
+    display: block;
+    margin: 0 auto;
+}
+
+.social-icon {
+    color: #fff;
+}
+
+ul.social-icons {
+    margin-top: 10px;
+}
+
+.social-icons li {
+    vertical-align: top;
+    display: inline;
+    height: 100px;
+}
+
+.social-icons a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.fa-facebook {
+    padding: 10px 19px;
+    -o-transition: .5s;
+    -ms-transition: .5s;
+    -moz-transition: .5s;
+    -webkit-transition: .5s;
+    transition: .5s;
+    color: rgba(255, 255, 255, 0.96);
+    border-radius: 15px;
+    font-size: 30px;
+    /*border: 2px solid rgba(154, 54, 240, 0);*/
+}
+
+/*.fa-facebook:hover {*/
+/*    font-size: 20px;*/
+/*    padding: 15px 22px;*/
+/*    color: #9a36f0;*/
+/*    !*border-radius: 100px;*!*/
+/*    !*border: 2px solid #9a36f0;*!*/
+/*}*/
+
+.fa-twitter {
+    padding: 10px 14px;
+    -o-transition: .5s;
+    -ms-transition: .5s;
+    -moz-transition: .5s;
+    -webkit-transition: .5s;
+    transition: .5s;
+    color: #ffffff;
+    border-radius: 15px;
+    /*border: 2px solid #9a36f0;*/
+}
+
+/*.fa-twitter:hover {*/
+/*    !*background-color: #9a36f0;*!*/
+/*    color: #9a36f0;*/
+/*    !*border-radius: 100px;*!*/
+/*    !*border: 2px solid #9a36f0;*!*/
+/*}*/
+
+.fa-rss {
+    padding: 10px 14px;
+    -o-transition: .5s;
+    -ms-transition: .5s;
+    -moz-transition: .5s;
+    -webkit-transition: .5s;
+    transition: .5s;
+    color: #ffffff;
+    border-radius: 15px;
+    border: 2px solid #ffffff;
+}
+
+.fa-rss:hover {
+    background-color: #eb8231;
+}
+
+.fa-youtube-play {
+    padding: 10px 18px;
+    -o-transition: .5s;
+    -ms-transition: .5s;
+    -moz-transition: .5s;
+    -webkit-transition: .5s;
+    transition: .5s;
+    color: #ffffff;
+    border-radius: 15px;
+    font-size: 30px;
+    /*border: 2px solid #9a36f0;*/
+}
+
+/*.fa-youtube-play:hover {*/
+/*    !*background-color: #9a36f0;*!*/
+/*    color: #9a36f0;*/
+/*    border-radius: 100px;*/
+/*    font-size: 20px;*/
+/*    padding: 15px 23px;*/
+/*    !*border: 2px solid #9a36f0;*!*/
+/*}*/
+
+.fa-twitter-square, .fa-phone, .fa-envelope, .fa-map-marker{
+    padding: 10px 19px;
+    -o-transition: .5s;
+    -ms-transition: .5s;
+    -moz-transition: .5s;
+    -webkit-transition: .5s;
+    transition: .5s;
+    color: #ffffff;
+    border-radius: 15px;
+    font-size: 30px;
+    /*border: 2px solid #9a36f0;*/
+}
+
+/*.fa-linkedin:hover {*/
+/*    !*background-color: #9a36f0;*!*/
+/*    color: #9a36f0;*/
+/*    font-size: 20px;*/
+/*    padding: 15px 23px;*/
+/*    !*border-radius: 100px;*!*/
+/*    !*border: 2px solid #9a36f0;*!*/
+/*}*/
+
+.fa-instagram {
+    padding: 10px 18px;
+    -o-transition: .5s;
+    -ms-transition: .5s;
+    -moz-transition: .5s;
+    -webkit-transition: .5s;
+    transition: .5s;
+    color: #ffffff;
+    border-radius: 15px;
+    font-size: 30px;
+    /*border: 2px solid #9a36f0;*/
+}
+
+/*.fa-instagram:hover {*/
+/*    !*background-color: #9a36f0;*!*/
+/*    color: #9a36f0;*/
+/*    !*border-radius: 100px;*!*/
+/*    font-size: 20px;*/
+/*    padding: 15px 22px;*/
+/*    !*border: 2px solid #9a36f0;*!*/
+/*}*/
+.single-cta{
+    margin: 20px;
+}
+.single-cta i {
+    color: #ffffff;
+    font-size: 30px;
+    float: left;
+    margin-top: 8px;
+}
+.cta-text {
+    padding-left: 15px;
+    display: inline-block;
+}

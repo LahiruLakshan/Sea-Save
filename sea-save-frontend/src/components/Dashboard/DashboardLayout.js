@@ -299,7 +299,7 @@ const DashboardLayout = (props) => {
             <CssBaseline/>
 
             <AppBar position="fixed" open={open} >
-                <Toolbar sx={{eight: "100px", bgcolor: customTheme.palette.secondary.main }} className={classes[headerBackgroundRef.current]}>
+                <Toolbar sx={{eight: "100px", bgcolor: "#cadfff" }} className={classes[headerBackgroundRef.current]}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"

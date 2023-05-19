@@ -5,7 +5,7 @@ import axios from "axios";
 import {BASE_URL} from "../../config/defaults";
 import {Grid} from "@mui/material";
 import ChallengeCard from "../admin/challenge/ChallengeCard";
-import CustomFooter from "../../components/CustomFooter";
+import CustomFooter from "../../components/footer/CustomFooter";
 
 const ChallengeView = ({name, profileId}) => {
     const [value, setValue] = React.useState(0);

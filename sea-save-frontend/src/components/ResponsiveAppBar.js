@@ -98,9 +98,9 @@ function ResponsiveAppBar() {
     };
 
     return (
-        <AppBar position="sticky">
+        <AppBar position="sticky" sx={{boxShadow: "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)",}}>
             <Container maxWidth="xl">
-                <Toolbar disableGutters>
+                <Toolbar disableGutters >
                     <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
                         <img src={logo} width={150}/>
                     </Box>
@@ -135,7 +135,7 @@ function ResponsiveAppBar() {
                             }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page} onClick={() => handleCloseNavMenu(page.route)}>
+                                <MenuItem key={page} onClick={() => handleCloseNavMenu(page.route)} >
                                     <Typography textAlign="center">{page.name}</Typography>
                                 </MenuItem>
                             ))}
@@ -150,7 +150,7 @@ function ResponsiveAppBar() {
                             <Button
                                 key={page}
                                 onClick={() => handleCloseNavMenu(page.route)}
-                                sx={{my: 2, color: 'white', display: 'block'}}
+                                sx={{my: 2, mx:5, color: 'white', display: 'block'}}
                             >
                                 {page.name}
                             </Button>

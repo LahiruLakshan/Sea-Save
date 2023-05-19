@@ -6,7 +6,7 @@ import {BASE_URL} from "../../config/defaults";
 import {Grid} from "@mui/material";
 import ChallengeCard from "../admin/challenge/ChallengeCard";
 import AnimalCard from "../admin/animal/AnimalCard";
-import CustomFooter from "../../components/CustomFooter";
+import CustomFooter from "../../components/footer/CustomFooter";
 
 const AnimalProfileView = ({name, profileId}) => {
     const [value, setValue] = React.useState(0);
