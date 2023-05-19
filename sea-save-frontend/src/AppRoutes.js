@@ -16,11 +16,12 @@ import {BASE_URL} from "./config/defaults";
 import Home from "./views/user/Home";
 import ChallengeView from "./views/user/ChallengeView";
 import AnimalProfileView from "./views/user/AnimalProfileView";
-import ForumView from "./views/user/ForumView";
+import ChatBotView from "./views/user/ChatBotView";
 
 const AppRoutes = () => {
     const [userList, setUserList] = useState([]);
     const [name, setName] = useState("Name");
+    const [profileId, setProfileId] = useState("");
     const [role, setRole] = useState("Role");
     const [userData, setUserData] = useState([]);
 
@@ -38,6 +39,7 @@ const AppRoutes = () => {
             console.log("Admin List : ", userList)
             userList.some(element => {
                 if (element.email === auth.currentUser.email) {
+                    setProfileId(element._id);
                     setName(element.name);
                     setRole(element.type);
                     setUserData(element);
@@ -48,6 +50,7 @@ const AppRoutes = () => {
     }, [userList])
     useEffect(() => {
         console.log("Role : ", role)
+        console.log("profileId : ", profileId)
     }, [role])
     return (
 
@@ -57,13 +60,13 @@ const AppRoutes = () => {
                     <Home/>
                 </Route>
                 <Route path="/challenge_view">
-                    <ChallengeView/>
+                    <ChallengeView name={name} profileId={profileId}/>
                 </Route>
                 <Route path="/animal_profile">
                     <AnimalProfileView/>
                 </Route>
-                <Route path="/forum_view">
-                    <ForumView/>
+                <Route path="/chat_bot">
+                    <ChatBotView/>
                 </Route>
                 {/*<Route exact path="/">*/}
                 {/*    <Login companyId={companyId} setCompanyId={setCompanyId}/>*/}

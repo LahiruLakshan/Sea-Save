@@ -19,24 +19,26 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import TablePagination from "@mui/material/TablePagination";
 import CustomDialog from "../../../components/CustomDialog";
 import CreateForum from "./CreateForum";
+import axios from "axios";
+import {BASE_URL} from "../../../config/defaults";
 
 const collectionMenuItems = [
     {id: 0, value: "all", text: "All"},
-    {id: 1, value: "author", text: "Author"},
-    {id: 2, value: "title", text: "Title"},
-    {id: 3, value: "lastUpdated", text: "Last Updated"},
+    {id: 1, value: "name", text: "Author"},
+    {id: 2, value: "solution", text: "Solution"},
+    {id: 3, value: "time", text: "Last Updated"},
 ];
 const collectionHeadCells = [
     {
-        id: 'createdDateTime',
+        id: 'time',
         numeric: true,
         disablePadding: false,
         align: "left",
         sort: true,
-        label: 'Schedule DateTime',
+        label: 'Last Updated',
     },
     {
-        id: 'author',
+        id: 'name',
         numeric: true,
         disablePadding: false,
         align: "left",
@@ -44,20 +46,12 @@ const collectionHeadCells = [
         label: 'Author',
     },
     {
-        id: 'title',
+        id: 'solution',
         numeric: true,
         disablePadding: false,
         align: "left",
         sort: true,
-        label: 'Title',
-    },
-    {
-        id: 'lastUpdated',
-        numeric: true,
-        disablePadding: false,
-        align: "left",
-        sort: true,
-        label: 'Last Updated',
+        label: 'Solution',
     },
     {
         id: 'options',
@@ -71,44 +65,42 @@ const collectionHeadCells = [
 
 ];
 
-const ForumTable = ({name}) => {
+const ForumTable = ({name, rows, forumList, getAllForums, setForumList, setRows}) => {
 
     const {enqueueSnackbar} = useSnackbar();
-    const [collectionList, setCollectionList] = useState([]);
     const [filterValue, setFilterValue] = React.useState('all');
-    const [rows, setRows] = useState([]);
+    const [rowData, setRowData] = React.useState("");
     const [row, setRow] = useState([]);
     //Modal
-    const [rowData, setRowData] = React.useState("");
+
     const [open, setOpen] = React.useState(false);
 
     //sort
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('createdDateTime');
+    const [orderBy, setOrderBy] = React.useState('time');
+
 
     //pagination
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     //dialog
-    const [regulationDeleteDialogOpen, setRegulationDeleteDialogOpen] = React.useState(false);
+    const [regulationDeleteDialogOpen, setForumDeleteDialogOpen] = React.useState(false);
 
 
     //search functions
     const requestSearch = (searchedVal) => {
         let keyword = searchedVal.target.value;
-        let newData = collectionList.filter(item => {
+        let newData = forumList.filter(item => {
             // console.log("requestSearch : ", item.firstName)
             if (keyword === "") return item;
-            else if ((item.author.toLowerCase().includes(keyword.toLowerCase()) || item.lastUpdated.toLowerCase().includes(keyword.toLowerCase()) || item.title.toLowerCase().includes(keyword.toLowerCase()) || moment(item.createdDateTime.toDate()).format('MMMM Do YYYY, h:mm a').toLowerCase().includes(keyword.toLowerCase())) && filterValue === "all") {
+            else if ((item.name.toLowerCase().includes(keyword.toLowerCase()) || item.time.toLowerCase().includes(keyword.toLowerCase()) || item.solution.toLowerCase().includes(keyword.toLowerCase())) && filterValue === "all") {
                 return item;
-            } else if (moment(item.createdDateTime.toDate()).format('MMMM Do YYYY, h:mm a').includes(keyword.toLowerCase()) && filterValue === "createdDateTime") {
+            } else if (item.name.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "name") {
                 return item;
-            } else if (item.author.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "author") {
+            } else if (item.solution.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "solution") {
                 return item;
-            } else if (item.title.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "title") {
-                return item;
-            } else if (item.lastUpdated.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "lastUpdated") {
+            } else if (item.time.toLowerCase().includes(keyword.toLowerCase()) && filterValue === "time") {
                 return item;
             }
 
@@ -118,28 +110,6 @@ const ForumTable = ({name}) => {
     const handleChange = (event) => {
         setFilterValue(event.target.value);
     };
-
-
-    //start load user data
-    useEffect(() => {
-        const colRef = collection(db, "forum");
-        onSnapshot(
-            colRef,
-            (snapShot) => {
-                let list = [];
-                snapShot.docs.forEach((doc) => {
-                    list.push({id: doc.id, ...doc.data()});
-                });
-                setCollectionList(list);
-                setRows(list);
-                console.log("-----setCompanyList---- ");
-            },
-            (error) => {
-                console.log(error);
-            }
-        )
-    }, [])
-
 
     //pagination functions
     const handleChangePage = (event, newPage) => {
@@ -158,11 +128,11 @@ const ForumTable = ({name}) => {
         setOpen(true);
     };
 
-    const deleteCollection = async (row) => {
-        const docRef = doc(db, "forum", row.id);
-        await deleteDoc(docRef).then(() => {
-                setRegulationDeleteDialogOpen(false);
-                enqueueSnackbar("Forum deleted successfully!", {variant: "success"})
+    const deleteChallenge = async (row) => {
+        await axios.delete(`${BASE_URL}forum/delete/${row._id}`).then(() => {
+            setForumDeleteDialogOpen(false);
+            enqueueSnackbar("Solution deleted successfully!", {variant: "success"})
+                getAllForums()
             }
         );
     }
@@ -189,15 +159,12 @@ const ForumTable = ({name}) => {
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => (
                                         <TableRow sx={{'& > *': {borderBottom: 'unset'}}}>
-                                            <TableCell align="left">{moment(row.createdDateTime.toDate()).format('MMMM Do YYYY, h:mm a')}</TableCell>
+                                            <TableCell align="left">{row.time}</TableCell>
                                             <TableCell component="th" scope="row">
-                                                {row.author}
+                                                {row.name}
                                             </TableCell>
                                             <TableCell component="th" scope="row">
-                                                {row.title}
-                                            </TableCell>
-                                            <TableCell component="th" scope="row">
-                                                {row.lastUpdated}
+                                                {row.solution}
                                             </TableCell>
                                             <TableCell align="center">
                                                 <Fab size="small" aria-label="edit"
@@ -209,7 +176,7 @@ const ForumTable = ({name}) => {
                                                 <Fab size="small" aria-label="add" sx={{marginLeft: 1, color: "#ff0000", backgroundColor: "#fff"}}
                                                      onClick={() => {
                                                          setRow(row);
-                                                         setRegulationDeleteDialogOpen(true);
+                                                         setForumDeleteDialogOpen(true);
                                                      }}>
                                                     <DeleteForeverRoundedIcon/>
                                                 </Fab>
@@ -237,7 +204,7 @@ const ForumTable = ({name}) => {
             <Dialog
                 open={regulationDeleteDialogOpen}
                 keepMounted
-                onClose={() => setRegulationDeleteDialogOpen(false)}
+                onClose={() => setForumDeleteDialogOpen(false)}
                 aria-describedby="alert-dialog-slide-description"
             >
                 <DialogTitle>{"Delete item"}</DialogTitle>
@@ -247,14 +214,14 @@ const ForumTable = ({name}) => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setRegulationDeleteDialogOpen(false)} variant={"outlined"}>{"No thanks"}</Button>
-                    <Button onClick={() => deleteCollection(row)} variant={"contained"}>{"Delete"}</Button>
+                    <Button onClick={() => setForumDeleteDialogOpen(false)} variant={"outlined"}>{"No thanks"}</Button>
+                    <Button onClick={() => deleteChallenge(row)} variant={"contained"}>{"Delete"}</Button>
                 </DialogActions>
             </Dialog>
             <CustomDialog
                 onClose={handleClose} closeBtn
                 open={open} title={"Edit Forum"}>
-                <CreateForum rowData={rowData} name={name} onClose={handleClose}/>
+                <CreateForum rowData={rowData} name={name} onClose={handleClose} getAllForums={() => getAllForums()}/>
             </CustomDialog>
         </Box>
     );

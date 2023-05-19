@@ -57,13 +57,13 @@ function ResponsiveAppBar() {
         {name: 'Home', route: "/home"},
         {name: 'Challenge', route: "/challenge_view"},
         {name: 'Profile', route: "/animal_profile"},
-        {name: 'Forum', route: "/forum_view"},
+        {name: 'ChatBot', route: "/chat_bot"},
     ];
     const settings = [
         {name: 'Home', route: "/home"},
         {name: 'Challenge', route: "/challenge_view"},
         {name: 'Profile', route: "/animal_profile"},
-        {name: 'Forum', route: "/forum_view"},
+        {name: 'ChatBot', route: "/chat_bot"},
         (role === "Admin" || role === "Super Admin") ? { name: 'Dashboard', route: "/user" } : {},
         {name: 'Log Out', route: "/logout"},
 
@@ -98,7 +98,7 @@ function ResponsiveAppBar() {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="sticky">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>

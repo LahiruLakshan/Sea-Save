@@ -4,12 +4,12 @@ const defaultTheme = createTheme()
 const theme = createTheme({
     palette: {
         primary: {
-            main: "#0049d5",
-            light: "#83a1c7",
+            main: "#0265A9",
+            light: "#5AC6FF",
         },
         secondary: {
             // main: "rgba(230,211,163,0.2)",
-            main: "#cadfff",
+            main: "#5AC6FF",
             light: "rgb(255,255,255)"
         },
     },
@@ -60,12 +60,12 @@ const theme = createTheme({
         MuiButton: {
             styleOverrides: {
                 containedPrimary: {
-                    background: "#0049d5",
+                    background: "#0265A9",
                     color: "#ffffff",
                 },
                 outlinedPrimary: {
-                    color: "#0049d5",
-                    borderColor: "#0049d5",
+                    color: "#0265A9",
+                    borderColor: "#0265A9",
 
                 }
             }
@@ -73,7 +73,7 @@ const theme = createTheme({
         MuiLoadingButton: {
             styleOverrides: {
                 loadingIndicator: {
-                    color: "#0049d5",
+                    color: "#0265A9",
                 }
             }
         },
@@ -106,7 +106,7 @@ const theme = createTheme({
         MuiAppBar: {
             styleOverrides: {
                 root: {
-                    backgroundColor: "#cadfff",
+                    backgroundColor: "#5AC6FF",
                 }
             }
         },

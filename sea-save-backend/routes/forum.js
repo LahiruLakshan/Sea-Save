@@ -6,13 +6,17 @@ router.route("/create").post(async (req, res) => {
     const {
         profileId,
         challengeId,
-        solution
+        name,
+        solution,
+        time
     } = req.body;
 
     const profile = new Forum({
         profileId,
         challengeId,
-        solution
+        name,
+        solution,
+        time
     });
 
     await profile
@@ -53,13 +57,17 @@ router.route("/update/:id").put(async (req, res) => {
     const {
         profileId,
         challengeId,
-        solution
+        name,
+        solution,
+        time
     } = req.body;
 
     await Forum.findByIdAndUpdate(id, {
         profileId,
         challengeId,
-        solution
+        name,
+        solution,
+        time
     }) //find the document by and update the relavant data
         .then(() => res.json({ success: true }))
         .catch((error) => res.json({ success: false, Error: error }));

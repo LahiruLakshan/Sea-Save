@@ -4,14 +4,18 @@ import {getDoc, collection, doc, onSnapshot, query, setDoc, updateDoc, where} fr
 import {db} from "../../../firebase";
 import {Box, Grid, Paper, TextField} from "@mui/material";
 import {LoadingButton} from "@mui/lab";
+import axios from "axios";
+import {BASE_URL} from "../../../config/defaults";
+import moment from "moment";
 
 const CreateForum = (props) => {
 
-    const {rowData, onClose, name} = props;
+    const {rowData, onClose, name, challengeId, profileId, getAllForums, getAllSolutions} = props;
     const [loading, setLoading] = React.useState(false);
     const [title, setTitle] = useState(rowData ? rowData.title : "");
-    const [description, setDescription] = useState(rowData ? rowData.description : "");
+    const [description, setDescription] = useState(rowData ? rowData.solution : "");
     const [changes, setChanges] = React.useState(false);
+    // const [challengeIdValue, setChallengeIdValue] = React.useState(challengeId);
 
     const {enqueueSnackbar} = useSnackbar();
 
@@ -20,11 +24,8 @@ const CreateForum = (props) => {
         setLoading(true);
 
 
-        if (title === ""){
-            enqueueSnackbar("Description Empty!", {variant: "error"});
-        }
-        else if (description === ""){
-            enqueueSnackbar("Description Empty!", {variant: "error"});
+       if (description === ""){
+            enqueueSnackbar("Solution Empty!", {variant: "error"});
         }
         else if (!changes){
             enqueueSnackbar("No Changes!", {variant: "warning"});
@@ -45,30 +46,78 @@ const CreateForum = (props) => {
         //
         // }
         else {
-            let payload = {title, description, createdDateTime: new Date(), author: name, lastUpdated: ""};
-            const docRef = doc(db, "forum", "forum")
-            await setDoc(docRef, payload).then(() => {
-                enqueueSnackbar("Rule and forum submitted!", {variant: "success"});
-                setChanges(false)
-                setLoading(false);
-            })
+           if (rowData){
+               console.log("rowData : ", rowData)
+
+               console.log("time : ", moment(new Date()).format('MMMM Do YYYY, h:mm a').trim())
+               const formData = {
+                   profileId: rowData.profileId.trim(),
+                   challengeId: rowData.challengeId.trim(),
+                   name: name,
+                   solution: description.trim(),
+                   time: moment(new Date()).format('MMMM Do YYYY, h:mm a').trim()
+               }
+
+
+               await axios.put(`${BASE_URL}forum/update/${rowData._id}`, formData)
+                   .then((res) => {
+                       console.log("Forum create RES : ", res)
+                       enqueueSnackbar("Done", {variant: "success"});
+                       setTitle("")
+                       setDescription("")
+                       getAllForums()
+                       onClose()
+                   }).catch((err) => {
+                       console.log("Forum create ERRor : ", err)
+                   })
+           } else {
+               const formData = {
+                   profileId: profileId.trim(),
+                   challengeId: challengeId.trim(),
+                   name: name,
+                   solution: description.trim(),
+                   time: moment(new Date()).format('MMMM Do YYYY, h:mm a').trim()
+               }
+
+               await axios.post(`${BASE_URL}forum/create`, formData)
+                   .then((res) => {
+                       console.log("Forum create RES : ", res)
+                       enqueueSnackbar("Done", {variant: "success"});
+                       setTitle("")
+                       setDescription("")
+                       getAllSolutions();
+                       onClose()
+                   }).catch((err) => {
+                       console.log("Forum create ERRor : ", err)
+                   })
+           }
+            // let payload = {title, description, createdDateTime: new Date(), author: name, lastUpdated: ""};
+            // const docRef = doc(db, "forum", "forum")
+            // await setDoc(docRef, payload).then(() => {
+            //     enqueueSnackbar("Rule and forum submitted!", {variant: "success"});
+            //     setChanges(false)
+            //     setLoading(false);
+            //     setTitle("")
+            //     setDescription("")
+            //     setTitle("")
+            // })
         }
         setLoading(false);
     };
 
     //start load user data
-    useEffect(() => {
-
-        const docRef = doc(db, "forum", "forum");
-
-        getDoc(docRef).then((doc) => {
-            setTitle(doc.data().title)
-            setDescription(doc.data().description)
-            console.log("Snap", doc.data().description)
-        })
-
-
-    }, [])
+    // useEffect(() => {
+    //
+    //     const docRef = doc(db, "forum", "forum");
+    //
+    //     getDoc(docRef).then((doc) => {
+    //         setTitle(doc.data().title)
+    //         setDescription(doc.data().description)
+    //         console.log("Snap", doc.data().description)
+    //     })
+    //
+    //
+    // }, [])
     return (
         <Box sx={{borderRadius: 0, justifyContent: "center", alignItems: "center", display: "flex"}}>
             <Grid container justifyContent="space-around" component={!rowData && Paper}
@@ -83,6 +132,26 @@ const CreateForum = (props) => {
 
                     <Grid container direction={"column"}>
                         {/*/!* ------------------Title--------------------- *!/*/}
+                        {/*<Grid container item direction={"column"}>*/}
+                        {/*    <Grid item sx={{paddingTop: "20px"}}>*/}
+                        {/*        /!*<Typography sx={{color: "#7b92ec",}}>Password</Typography>*!/*/}
+                        {/*        <Grid item sx={{}}>*/}
+                        {/*            <TextField margin="dense" id="outlined-basic"*/}
+                        {/*                       fullWidth*/}
+                        {/*                       sx={{width: "100%", minWidth: "150px"}}*/}
+                        {/*                       variant="outlined" label={"Forum Title"}*/}
+                        {/*                       value={title}*/}
+                        {/*                       onChange={(e) => {*/}
+                        {/*                           setChanges(true);*/}
+                        {/*                           setTitle(e.target.value);*/}
+                        {/*                       }}/>*/}
+                        {/*            /!*<CustomTextField/>*!/*/}
+                        {/*        </Grid>*/}
+                        {/*    </Grid>*/}
+                        {/*</Grid>*/}
+
+                        {/* -----------------------Solution---------------------------- */}
+
                         <Grid container item direction={"column"}>
                             <Grid item sx={{paddingTop: "20px"}}>
                                 {/*<Typography sx={{color: "#7b92ec",}}>Password</Typography>*/}
@@ -90,28 +159,8 @@ const CreateForum = (props) => {
                                     <TextField margin="dense" id="outlined-basic"
                                                fullWidth
                                                sx={{width: "100%", minWidth: "150px"}}
-                                               variant="outlined" label={"Forum Title"}
-                                               value={title}
-                                               onChange={(e) => {
-                                                   setChanges(true);
-                                                   setTitle(e.target.value);
-                                               }}/>
-                                    {/*<CustomTextField/>*/}
-                                </Grid>
-                            </Grid>
-                        </Grid>
-
-                        {/* -----------------------Description---------------------------- */}
-
-                        <Grid container item direction={"column"}>
-                            <Grid item sx={{paddingTop: "20px"}}>
-                                {/*<Typography sx={{color: "#7b92ec",}}>Password</Typography>*/}
-                                <Grid item sx={{}}>
-                                    <TextField margin="dense" id="outlined-basic"
-                                               fullWidth
-                                               sx={{width: "100%", minWidth: "150px"}}
-                                               variant="outlined" label={"Forum Description"}
-                                               placeholder={"Write forum..."}
+                                               variant="outlined" label={"Solution"}
+                                               placeholder={"Write Solution..."}
                                                value={description}
                                                multiline
                                         // minRows={7}
