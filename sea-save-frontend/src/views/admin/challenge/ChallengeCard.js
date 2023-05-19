@@ -22,6 +22,7 @@ import CreateForum from "../forum/CreateForum";
 import axios from "axios";
 import {BASE_URL} from "../../../config/defaults";
 import {useSnackbar} from "notistack";
+import {useEffect, useState} from "react";
 
 const ExpandMore = styled((props) => {
     const {expand, ...other} = props;
@@ -62,7 +63,20 @@ const ChallengeCard = ({data, solutions, name, profileId, getAllChallenges, getA
             }
         );
     }
+    const [imageHeight, setImageHeight] = useState(0);
 
+    useEffect(() => {
+        const calculateHeight = () => {
+            const img = new Image();
+            img.onload = () => {
+                setImageHeight(img.height);
+            };
+            img.src = data?.imageUrl;
+        };
+
+
+        calculateHeight();
+    }, [data?.imageUrl]);
     return (
         <>
             <Card sx={{width: "75vw"}}>
@@ -83,7 +97,7 @@ const ChallengeCard = ({data, solutions, name, profileId, getAllChallenges, getA
                 />
                 <CardMedia
                     component="img"
-                    height="194"
+                    height={imageHeight}
                     image={data?.imageUrl}
                     alt="Paella dish"
                 />

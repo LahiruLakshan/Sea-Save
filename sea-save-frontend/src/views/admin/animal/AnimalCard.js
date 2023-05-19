@@ -22,6 +22,7 @@ import CreateForum from "../forum/CreateForum";
 import axios from "axios";
 import {BASE_URL} from "../../../config/defaults";
 import {useSnackbar} from "notistack";
+import {useEffect, useState} from "react";
 
 const ExpandMore = styled((props) => {
     const {expand, ...other} = props;
@@ -54,8 +55,21 @@ const AnimalCard = ({data}) => {
         setExpanded(!expanded);
     };
 
+    const [imageHeight, setImageHeight] = useState(0);
 
-    return (
+    useEffect(() => {
+        const calculateHeight = () => {
+            const img = new Image();
+            img.onload = () => {
+                setImageHeight(img.height);
+            };
+            img.src = data?.imageUrl;
+        };
+
+
+        calculateHeight();
+    }, [data?.imageUrl]);
+        return (
         <>
             <Card sx={{width: "75vw"}}>
                 <CardHeader
@@ -75,13 +89,16 @@ const AnimalCard = ({data}) => {
                 />
                 <CardMedia
                     component="img"
-                    height="194"
+                    height={imageHeight}
                     image={data?.imageUrl}
                     alt="Paella dish"
                 />
                 <CardContent>
+                    <Typography variant="body2" sx={{color:"#000"}}>
+                        Main Threat
+                    </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Main Threat : {data?.mainThreat}
+                        {data?.mainThreat}
                     </Typography>
                 </CardContent>
                 <CardActions disableSpacing>
@@ -97,8 +114,11 @@ const AnimalCard = ({data}) => {
                 </CardActions>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent>
+                        <Typography variant="body2" color="text.secondary" sx={{color:"#000"}}>
+                            Description
+                        </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            Description : {data?.description}
+                            {data?.description}
                         </Typography>
                     </CardContent>
                 </Collapse>
