@@ -130,7 +130,7 @@ const PendingUsersTable = ({role, getAllProfiles, profileList, setProfileList, s
     return (
         <Box sx={{width: '100%',}}>
             <Paper sx={{width: '100%', mb: 2,}}>
-                <EnhancedTableToolbar tableName={"Pending Users Table"} menuItems={collectionMenuItems}
+                <EnhancedTableToolbar tableName={"Approved Users Table"} menuItems={collectionMenuItems}
                                       requestSearch={requestSearch}
                                       handleChange={handleChange} filter={filterValue}/>
                 <TableContainer sx={{maxHeight: "55vh"}}>

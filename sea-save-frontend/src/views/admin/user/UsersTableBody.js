@@ -101,7 +101,9 @@ function UsersTableBody(props) {
             }
         );
     }
-
+    useEffect(() =>{
+        console.log("----------row : ", row);
+    },[row])
     const updateCollection = async (row) => {
         console.log("UPDATE USER : ", row)
         const formData = {

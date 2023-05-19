@@ -3,6 +3,7 @@ import ResponsiveAppBar from "../../components/ResponsiveAppBar";
 import ChatBot from "react-simple-chatbot";
 import {ThemeProvider} from 'styled-components';
 import {Grid} from "@mui/material";
+import CustomFooter from "../../components/footer/CustomFooter";
 
 const ChatBotView = () => {
 
@@ -91,6 +92,7 @@ const ChatBotView = () => {
                     <ChatBot steps={steps} />
                 </ThemeProvider>
             </Grid>
+            <CustomFooter/>
         </>
     );
 };
